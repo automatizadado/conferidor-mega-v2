@@ -1,4 +1,4 @@
-name: Atualizar resultado Mega-Sena
+name: Atualizar Mega-Sena e Ciclo
 
 on:
   workflow_dispatch:
@@ -13,19 +13,49 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
+      # =====================================================
+      # 1. BAIXAR REPOSITÓRIO
+      # =====================================================
+
       - name: Baixar repositorio
         uses: actions/checkout@v4
 
-      - name: Buscar resultado
+
+      # =====================================================
+      # 2. BUSCAR RESULTADO E PROCESSAR CICLO
+      # =====================================================
+
+      - name: Buscar resultado e processar ciclo
         shell: python
         run: |
           import json
+          import os
           import urllib.request
           from datetime import datetime, timezone
 
+
+          # ==================================================
+          # CONFIGURAÇÕES
+          # ==================================================
+
           BASE = "https://loteriascaixa-api.herokuapp.com/api/megasena"
 
+          ARQUIVO_RESULTADO = "resultado.json"
+
+          ARQUIVO_CICLO = "ciclo.json"
+
+
+          # ==================================================
+          # FUNÇÃO: BUSCAR API
+          # ==================================================
+
           def buscar(url):
+
+              print(
+                  f"Consultando: {url}"
+              )
+
               req = urllib.request.Request(
                   url,
                   headers={
@@ -34,17 +64,112 @@ jobs:
                   }
               )
 
-              with urllib.request.urlopen(req, timeout=30) as resposta:
-                  return json.loads(
-                      resposta.read().decode("utf-8")
+              with urllib.request.urlopen(
+                  req,
+                  timeout=30
+              ) as resposta:
+
+                  if resposta.status != 200:
+
+                      raise Exception(
+                          f"Erro HTTP {resposta.status}"
+                      )
+
+                  conteudo = (
+                      resposta
+                      .read()
+                      .decode("utf-8")
                   )
 
-          print("Buscando ultimo concurso...")
+                  return json.loads(
+                      conteudo
+                  )
 
-          atual = buscar(BASE + "/latest")
 
           # ==================================================
-          # CONCURSO
+          # FUNÇÃO: SALVAR JSON
+          # ==================================================
+
+          def salvar_json(
+              nome,
+              dados
+          ):
+
+              with open(
+                  nome,
+                  "w",
+                  encoding="utf-8"
+              ) as arquivo:
+
+                  json.dump(
+                      dados,
+                      arquivo,
+                      ensure_ascii=False,
+                      indent=2
+                  )
+
+                  arquivo.write("\n")
+
+
+          # ==================================================
+          # FUNÇÃO: VALIDAR 6 DEZENAS
+          # ==================================================
+
+          def validar_dezenas(
+              numeros
+          ):
+
+              if not isinstance(
+                  numeros,
+                  list
+              ):
+                  return False
+
+              if len(numeros) != 6:
+                  return False
+
+              if len(set(numeros)) != 6:
+                  return False
+
+              for numero in numeros:
+
+                  if not isinstance(
+                      numero,
+                      int
+                  ):
+                      return False
+
+                  if (
+                      numero < 1
+                      or numero > 60
+                  ):
+                      return False
+
+              return True
+
+
+          # ==================================================
+          # BUSCAR ÚLTIMO CONCURSO
+          # ==================================================
+
+          print("")
+          print(
+              "========================================"
+          )
+          print(
+              "BUSCANDO ULTIMO CONCURSO DA MEGA-SENA"
+          )
+          print(
+              "========================================"
+          )
+
+          atual = buscar(
+              BASE + "/latest"
+          )
+
+
+          # ==================================================
+          # NÚMERO DO CONCURSO
           # ==================================================
 
           concurso = (
@@ -52,12 +177,22 @@ jobs:
               or atual.get("numero")
           )
 
-          if not concurso:
+          if concurso is None:
+
               raise Exception(
                   "Numero do concurso atual nao encontrado."
               )
 
-          concurso = int(concurso)
+          concurso = int(
+              concurso
+          )
+
+          if concurso <= 0:
+
+              raise Exception(
+                  "Numero do concurso invalido."
+              )
+
 
           # ==================================================
           # DATA DO SORTEIO
@@ -70,142 +205,798 @@ jobs:
           )
 
           if not data_sorteio:
+
               raise Exception(
                   "Data do sorteio nao encontrada."
               )
 
-          print(
-              f"Concurso {concurso} - Data: {data_sorteio}"
-          )
+          data_sorteio = str(
+              data_sorteio
+          ).strip()
+
 
           # ==================================================
           # DEZENAS
           # ==================================================
 
-          dezenas = (
+          dezenas_api = (
               atual.get("dezenas")
               or atual.get("listaDezenas")
               or []
           )
 
-          dezenas = [
-              str(numero).zfill(2)
-              for numero in dezenas
-          ]
+          try:
 
-          if len(dezenas) != 6:
+              dezenas = [
+                  int(numero)
+                  for numero in dezenas_api
+              ]
+
+          except Exception:
+
               raise Exception(
-                  f"Resultado invalido: {len(dezenas)} dezenas."
+                  "Nao foi possivel converter as dezenas."
               )
+
+          if not validar_dezenas(
+              dezenas
+          ):
+
+              raise Exception(
+                  f"Resultado invalido: {dezenas}"
+              )
+
+          dezenas.sort()
+
 
           # ==================================================
           # ACUMULOU
           # ==================================================
 
           if "acumulou" in atual:
-              acumulou = atual.get("acumulou")
+
+              acumulou = atual.get(
+                  "acumulou"
+              )
 
           elif "acumulado" in atual:
-              acumulou = atual.get("acumulado")
+
+              acumulou = atual.get(
+                  "acumulado"
+              )
 
           else:
+
               acumulou = None
+
 
           # ==================================================
           # PRÓXIMO PRÊMIO
           # ==================================================
 
           proximo_premio = (
-              atual.get("valorEstimadoProximoConcurso")
-              or atual.get("valorEstimadoProximo")
-              or atual.get("proximoPremio")
+              atual.get(
+                  "valorEstimadoProximoConcurso"
+              )
+              or atual.get(
+                  "valorEstimadoProximo"
+              )
+              or atual.get(
+                  "proximoPremio"
+              )
           )
+
 
           # ==================================================
           # CONCURSO ANTERIOR
           # ==================================================
 
-          concurso_anterior = concurso - 1
+          concurso_anterior = (
+              concurso - 1
+          )
 
+          print("")
           print(
-              f"Buscando concurso anterior: {concurso_anterior}"
+              f"Concurso atual: {concurso}"
+          )
+          print(
+              f"Data: {data_sorteio}"
+          )
+          print(
+              f"Dezenas: {dezenas}"
+          )
+          print(
+              f"Buscando concurso anterior: "
+              f"{concurso_anterior}"
           )
 
           anterior = buscar(
-              BASE + "/" + str(concurso_anterior)
+              BASE
+              + "/"
+              + str(
+                  concurso_anterior
+              )
           )
 
+
           # ==================================================
-          # PRÊMIO SORTEADO
+          # PRÊMIO DO CONCURSO ATUAL
           #
-          # A estimativa do próximo prêmio publicada no
-          # concurso anterior corresponde ao prêmio que
-          # estava previsto para o concurso atual.
+          # Regra utilizada:
+          # a estimativa do concurso anterior corresponde
+          # ao prêmio previsto para o concurso atual.
           # ==================================================
 
           premio_sorteado = (
-              anterior.get("valorEstimadoProximoConcurso")
-              or anterior.get("valorEstimadoProximo")
-              or anterior.get("proximoPremio")
+              anterior.get(
+                  "valorEstimadoProximoConcurso"
+              )
+              or anterior.get(
+                  "valorEstimadoProximo"
+              )
+              or anterior.get(
+                  "proximoPremio"
+              )
           )
 
           if premio_sorteado is None:
+
               raise Exception(
-                  "Nao foi possivel encontrar a estimativa "
+                  "Nao foi possivel localizar a estimativa "
                   "do concurso anterior."
               )
 
+
           # ==================================================
-          # RESULTADO NORMALIZADO
+          # CRIAR RESULTADO.JSON
           # ==================================================
 
           resultado = {
-              "concurso": concurso,
-              "data": data_sorteio,
-              "dezenas": dezenas,
-              "acumulou": acumulou,
-              "premioSorteado": premio_sorteado,
-              "proximoPremio": proximo_premio,
-              "concursoAnterior": concurso_anterior,
-              "atualizadoEm": datetime.now(
-                  timezone.utc
-              ).isoformat()
+
+              "concurso":
+                  concurso,
+
+              "data":
+                  data_sorteio,
+
+              "dezenas": [
+                  str(numero).zfill(2)
+                  for numero in dezenas
+              ],
+
+              "acumulou":
+                  acumulou,
+
+              "premioSorteado":
+                  premio_sorteado,
+
+              "proximoPremio":
+                  proximo_premio,
+
+              "concursoAnterior":
+                  concurso_anterior,
+
+              "atualizadoEm":
+                  datetime.now(
+                      timezone.utc
+                  ).isoformat()
+
           }
 
-          print("Resultado normalizado:")
 
-          print(
-              json.dumps(
-                  resultado,
-                  ensure_ascii=False,
-                  indent=2
-              )
+          # ==================================================
+          # SALVAR RESULTADO.JSON
+          # ==================================================
+
+          salvar_json(
+              ARQUIVO_RESULTADO,
+              resultado
           )
 
+          print("")
+          print(
+              f"resultado.json atualizado "
+              f"para o concurso {concurso}."
+          )
+
+
+          # ==================================================
+          # VERIFICAR CICLO.JSON
+          # ==================================================
+
+          if not os.path.exists(
+              ARQUIVO_CICLO
+          ):
+
+              raise Exception(
+                  "Arquivo ciclo.json nao encontrado."
+              )
+
+
+          # ==================================================
+          # CARREGAR CICLO.JSON
+          # ==================================================
+
           with open(
-              "resultado.json",
-              "w",
+              ARQUIVO_CICLO,
+              "r",
               encoding="utf-8"
           ) as arquivo:
 
-              json.dump(
-                  resultado,
-                  arquivo,
-                  ensure_ascii=False,
-                  indent=2
+              ciclo = json.load(
+                  arquivo
               )
 
-      - name: Salvar resultado
+
+          # ==================================================
+          # VALIDAR STATUS DO CICLO
+          # ==================================================
+
+          status_ciclo = ciclo.get(
+              "status",
+              "ativo"
+          )
+
+          if status_ciclo != "ativo":
+
+              print("")
+              print(
+                  "Ciclo nao esta ativo."
+              )
+              print(
+                  f"Status atual: {status_ciclo}"
+              )
+              print(
+                  "O resultado.json foi atualizado, "
+                  "mas o ciclo nao sera alterado."
+              )
+
+              raise SystemExit(0)
+
+
+          # ==================================================
+          # GARANTIR ESTRUTURA DO CICLO
+          # ==================================================
+
+          ciclo.setdefault(
+              "totalConcursos",
+              12
+          )
+
+          ciclo.setdefault(
+              "concursoInicialPlanejado",
+              3062
+          )
+
+          ciclo.setdefault(
+              "concursoInicial",
+              None
+          )
+
+          ciclo.setdefault(
+              "concursoFinal",
+              None
+          )
+
+          ciclo.setdefault(
+              "concursosProcessados",
+              []
+          )
+
+          ciclo.setdefault(
+              "historico",
+              []
+          )
+
+          ciclo.setdefault(
+              "jogos",
+              []
+          )
+
+
+          # ==================================================
+          # CONCURSO INICIAL PLANEJADO
+          #
+          # Impede que o concurso 3061 seja registrado
+          # como parte do ciclo.
+          # ==================================================
+
+          inicio_planejado = int(
+              ciclo.get(
+                  "concursoInicialPlanejado",
+                  3062
+              )
+          )
+
+          if concurso < inicio_planejado:
+
+              print("")
+              print(
+                  "========================================"
+              )
+              print(
+                  "CONCURSO IGNORADO PELO CICLO"
+              )
+              print(
+                  "========================================"
+              )
+
+              print(
+                  f"Resultado encontrado: {concurso}"
+              )
+
+              print(
+                  f"Inicio planejado: {inicio_planejado}"
+              )
+
+              print(
+                  f"O concurso {concurso} nao pertence "
+                  "ao ciclo atual."
+              )
+
+              print(
+                  "O ciclo permanece sem alteracoes."
+              )
+
+              raise SystemExit(0)
+
+
+          # ==================================================
+          # NORMALIZAR CONCURSOS PROCESSADOS
+          # ==================================================
+
+          processados = []
+
+          for numero in ciclo.get(
+              "concursosProcessados",
+              []
+          ):
+
+              try:
+
+                  processados.append(
+                      int(numero)
+                  )
+
+              except Exception:
+
+                  raise Exception(
+                      "Existe um concurso invalido em "
+                      "concursosProcessados."
+                  )
+
+          processados = sorted(
+              set(
+                  processados
+              )
+          )
+
+          ciclo[
+              "concursosProcessados"
+          ] = processados
+
+
+          # ==================================================
+          # BLOQUEIO DE DUPLICIDADE
+          #
+          # Se a Action rodar várias vezes para o mesmo
+          # concurso, ele NÃO será descontado novamente.
+          # ==================================================
+
+          if concurso in processados:
+
+              print("")
+              print(
+                  "========================================"
+              )
+              print(
+                  "CONCURSO JA PROCESSADO"
+              )
+              print(
+                  "========================================"
+              )
+
+              print(
+                  f"Concurso {concurso} ja esta "
+                  "registrado no ciclo."
+              )
+
+              print(
+                  "Nenhum desconto sera feito novamente."
+              )
+
+              print(
+                  f"Restantes atuais: "
+                  f"{ciclo.get('restantes')}"
+              )
+
+              raise SystemExit(0)
+
+
+          # ==================================================
+          # VALIDAR QUANTIDADE DE CONCURSOS
+          # ==================================================
+
+          total_concursos = int(
+              ciclo.get(
+                  "totalConcursos",
+                  12
+              )
+          )
+
+          if total_concursos <= 0:
+
+              raise Exception(
+                  "totalConcursos invalido."
+              )
+
+          if len(processados) >= total_concursos:
+
+              ciclo[
+                  "restantes"
+              ] = 0
+
+              ciclo[
+                  "status"
+              ] = "concluido"
+
+              salvar_json(
+                  ARQUIVO_CICLO,
+                  ciclo
+              )
+
+              print(
+                  "O ciclo ja possui todos "
+                  "os concursos previstos."
+              )
+
+              raise SystemExit(0)
+
+
+          # ==================================================
+          # VALIDAR JOGOS
+          # ==================================================
+
+          jogos = ciclo.get(
+              "jogos",
+              []
+          )
+
+          if not isinstance(
+              jogos,
+              list
+          ):
+
+              raise Exception(
+                  "A propriedade jogos precisa ser uma lista."
+              )
+
+          if not jogos:
+
+              raise Exception(
+                  "Nenhum jogo cadastrado no ciclo.json."
+              )
+
+          nomes_encontrados = set()
+
+          for jogo in jogos:
+
+              dono = str(
+                  jogo.get(
+                      "dono",
+                      ""
+                  )
+              ).strip()
+
+              if not dono:
+
+                  raise Exception(
+                      "Existe um jogo sem nome de participante."
+                  )
+
+              if dono in nomes_encontrados:
+
+                  raise Exception(
+                      f"Participante duplicado: {dono}"
+                  )
+
+              nomes_encontrados.add(
+                  dono
+              )
+
+              numeros = jogo.get(
+                  "numeros",
+                  []
+              )
+
+              if not validar_dezenas(
+                  numeros
+              ):
+
+                  raise Exception(
+                      f"Jogo invalido de {dono}: {numeros}"
+                  )
+
+
+          # ==================================================
+          # CONFERIR TODOS OS JOGOS
+          # ==================================================
+
+          resultados_jogos = []
+
+          dezenas_sorteadas = set(
+              dezenas
+          )
+
+          print("")
+          print(
+              "========================================"
+          )
+          print(
+              "CONFERENCIA DOS JOGOS"
+          )
+          print(
+              "========================================"
+          )
+
+          for jogo in jogos:
+
+              dono = jogo[
+                  "dono"
+              ]
+
+              numeros = sorted(
+                  jogo[
+                      "numeros"
+                  ]
+              )
+
+              dezenas_acertadas = sorted(
+                  set(
+                      numeros
+                  ).intersection(
+                      dezenas_sorteadas
+                  )
+              )
+
+              acertos = len(
+                  dezenas_acertadas
+              )
+
+              faixa = None
+
+              if acertos == 4:
+
+                  faixa = "Quadra"
+
+              elif acertos == 5:
+
+                  faixa = "Quina"
+
+              elif acertos == 6:
+
+                  faixa = "Sena"
+
+
+              resultado_jogo = {
+
+                  "dono":
+                      dono,
+
+                  "numeros":
+                      numeros,
+
+                  "acertos":
+                      acertos,
+
+                  "dezenasAcertadas":
+                      dezenas_acertadas,
+
+                  "faixa":
+                      faixa
+
+              }
+
+
+              resultados_jogos.append(
+                  resultado_jogo
+              )
+
+
+              print(
+                  f"{dono}: "
+                  f"{acertos} acerto(s) "
+                  f"{dezenas_acertadas}"
+              )
+
+
+          # ==================================================
+          # REGISTRO COMPLETO DO CONCURSO
+          # ==================================================
+
+          registro = {
+
+              "concurso":
+                  concurso,
+
+              "data":
+                  data_sorteio,
+
+              "dezenas":
+                  dezenas,
+
+              "acumulou":
+                  acumulou,
+
+              "premioSorteado":
+                  premio_sorteado,
+
+              "proximoPremio":
+                  proximo_premio,
+
+              "resultados":
+                  resultados_jogos,
+
+              "processadoEm":
+                  datetime.now(
+                      timezone.utc
+                  ).isoformat()
+
+          }
+
+
+          # ==================================================
+          # DEFINIR PRIMEIRO CONCURSO REAL
+          # ==================================================
+
+          if ciclo.get(
+              "concursoInicial"
+          ) is None:
+
+              ciclo[
+                  "concursoInicial"
+              ] = concurso
+
+
+          # ==================================================
+          # ADICIONAR AO HISTÓRICO
+          # ==================================================
+
+          ciclo[
+              "historico"
+          ].append(
+              registro
+          )
+
+
+          # ==================================================
+          # REGISTRAR CONCURSO COMO PROCESSADO
+          # ==================================================
+
+          ciclo[
+              "concursosProcessados"
+          ].append(
+              concurso
+          )
+
+          ciclo[
+              "concursosProcessados"
+          ] = sorted(
+              set(
+                  ciclo[
+                      "concursosProcessados"
+                  ]
+              )
+          )
+
+
+          # ==================================================
+          # CALCULAR RESTANTES
+          # ==================================================
+
+          quantidade_processada = len(
+              ciclo[
+                  "concursosProcessados"
+              ]
+          )
+
+          restantes = max(
+              0,
+              total_concursos
+              - quantidade_processada
+          )
+
+          ciclo[
+              "restantes"
+          ] = restantes
+
+
+          # ==================================================
+          # FINALIZAR CICLO NO 12º CONCURSO
+          # ==================================================
+
+          if restantes == 0:
+
+              ciclo[
+                  "status"
+              ] = "concluido"
+
+              ciclo[
+                  "concursoFinal"
+              ] = concurso
+
+
+          # ==================================================
+          # SALVAR CICLO.JSON
+          # ==================================================
+
+          salvar_json(
+              ARQUIVO_CICLO,
+              ciclo
+          )
+
+
+          # ==================================================
+          # RESUMO DO PROCESSAMENTO
+          # ==================================================
+
+          print("")
+          print(
+              "========================================"
+          )
+          print(
+              "PROCESSAMENTO CONCLUIDO"
+          )
+          print(
+              "========================================"
+          )
+
+          print(
+              f"Ciclo: {ciclo.get('ciclo')}"
+          )
+
+          print(
+              f"Concurso processado: {concurso}"
+          )
+
+          print(
+              f"Concurso inicial: "
+              f"{ciclo.get('concursoInicial')}"
+          )
+
+          print(
+              f"Processados: {quantidade_processada}"
+          )
+
+          print(
+              f"Restantes: {restantes}"
+          )
+
+          print(
+              f"Status: {ciclo.get('status')}"
+          )
+
+          print(
+              "========================================"
+          )
+
+
+      # =====================================================
+      # 3. SALVAR ALTERAÇÕES NO GITHUB
+      # =====================================================
+
+      - name: Salvar alteracoes
         run: |
           git config user.name "mega-sena-bot"
           git config user.email "actions@github.com"
 
-          git add resultado.json
+          git add resultado.json ciclo.json
 
           if git diff --cached --quiet; then
-            echo "Resultado nao mudou."
+            echo "Nenhuma alteracao para salvar."
             exit 0
           fi
 
-          git commit -m "Atualiza resultado da Mega-Sena"
+          git commit -m "Atualiza resultado e processa ciclo Mega-Sena"
+
           git push
