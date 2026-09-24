@@ -43,6 +43,10 @@ jobs:
 
           atual = buscar(BASE + "/latest")
 
+          # ==================================================
+          # CONCURSO
+          # ==================================================
+
           concurso = (
               atual.get("concurso")
               or atual.get("numero")
@@ -54,6 +58,29 @@ jobs:
               )
 
           concurso = int(concurso)
+
+          # ==================================================
+          # DATA DO SORTEIO
+          # ==================================================
+
+          data_sorteio = (
+              atual.get("data")
+              or atual.get("dataApuracao")
+              or atual.get("dataSorteio")
+          )
+
+          if not data_sorteio:
+              raise Exception(
+                  "Data do sorteio nao encontrada."
+              )
+
+          print(
+              f"Concurso {concurso} - Data: {data_sorteio}"
+          )
+
+          # ==================================================
+          # DEZENAS
+          # ==================================================
 
           dezenas = (
               atual.get("dezenas")
@@ -71,19 +98,9 @@ jobs:
                   f"Resultado invalido: {len(dezenas)} dezenas."
               )
 
-          #
-          # PRÓXIMO PRÊMIO
-          #
-
-          proximo_premio = (
-              atual.get("valorEstimadoProximoConcurso")
-              or atual.get("valorEstimadoProximo")
-              or atual.get("proximoPremio")
-          )
-
-          #
+          # ==================================================
           # ACUMULOU
-          #
+          # ==================================================
 
           if "acumulou" in atual:
               acumulou = atual.get("acumulou")
@@ -94,9 +111,19 @@ jobs:
           else:
               acumulou = None
 
-          #
-          # BUSCAR CONCURSO ANTERIOR
-          #
+          # ==================================================
+          # PRÓXIMO PRÊMIO
+          # ==================================================
+
+          proximo_premio = (
+              atual.get("valorEstimadoProximoConcurso")
+              or atual.get("valorEstimadoProximo")
+              or atual.get("proximoPremio")
+          )
+
+          # ==================================================
+          # CONCURSO ANTERIOR
+          # ==================================================
 
           concurso_anterior = concurso - 1
 
@@ -108,10 +135,13 @@ jobs:
               BASE + "/" + str(concurso_anterior)
           )
 
+          # ==================================================
+          # PRÊMIO SORTEADO
           #
-          # A ESTIMATIVA DO CONCURSO ANTERIOR
-          # É O PRÊMIO SORTEADO DO CONCURSO ATUAL
-          #
+          # A estimativa do próximo prêmio publicada no
+          # concurso anterior corresponde ao prêmio que
+          # estava previsto para o concurso atual.
+          # ==================================================
 
           premio_sorteado = (
               anterior.get("valorEstimadoProximoConcurso")
@@ -125,8 +155,13 @@ jobs:
                   "do concurso anterior."
               )
 
+          # ==================================================
+          # RESULTADO NORMALIZADO
+          # ==================================================
+
           resultado = {
               "concurso": concurso,
+              "data": data_sorteio,
               "dezenas": dezenas,
               "acumulou": acumulou,
               "premioSorteado": premio_sorteado,
@@ -138,6 +173,7 @@ jobs:
           }
 
           print("Resultado normalizado:")
+
           print(
               json.dumps(
                   resultado,
