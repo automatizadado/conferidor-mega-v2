@@ -9,8 +9,8 @@
     "55"
   ],
   "acumulou": true,
-  "premioSena": null,
+  "premioSorteado": 32000000.0,
   "proximoPremio": 38000000.0,
-  "fonte": "https://loteriascaixa-api.herokuapp.com/api/megasena/latest",
-  "atualizadoEm": "2026-09-24T11:41:40.072782+00:00"
+  "concursoAnterior": 3060,
+  "atualizadoEm": "2026-09-24T11:48:42.997490+00:00"
 }
