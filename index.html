@@ -3,11 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Conferidor Premium Mega-Sena</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
+
 body {
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     background: #000;
@@ -45,8 +47,12 @@ h2 {
 
 .input-group-row {
     display: flex;
-    gap: 10px;
+    gap: 8px;
     margin-bottom: 10px;
+}
+
+.campo {
+    min-width: 0;
 }
 
 label {
@@ -119,11 +125,6 @@ button:disabled {
     color: white;
 }
 
-.btn-backup {
-    background: linear-gradient(135deg,#4B5563,#374151);
-    color: white;
-}
-
 .btn-check {
     background: linear-gradient(135deg,#2ebd59,#1b5e20);
     color: white;
@@ -160,13 +161,6 @@ button:disabled {
     margin: -5px 0 12px;
 }
 
-.backup-section {
-    border-top: 1px dashed #374151;
-    margin-top: 15px;
-    padding-top: 15px;
-    margin-bottom: 15px;
-}
-
 .resultado {
     margin-top: 20px;
     display: none;
@@ -201,7 +195,7 @@ button:disabled {
 }
 
 /* ========================================================= */
-/* PRINT DO WHATSAPP - MANTER COMPACTO                       */
+/* PRINT DO WHATSAPP                                         */
 /* ========================================================= */
 
 .card.capturando {
@@ -217,17 +211,17 @@ button:disabled {
 
 .card.capturando .input-group-row {
     margin-bottom: 8px;
-    gap: 8px;
+    gap: 6px;
 }
 
 .card.capturando label {
-    font-size: .7em;
+    font-size: .68em;
     margin-bottom: 3px;
 }
 
 .card.capturando input:not(#s1):not(#s2):not(#s3):not(#s4):not(#s5):not(#s6) {
-    padding: 12px 10px !important;
-    font-size: 14px !important;
+    padding: 10px 7px !important;
+    font-size: 13px !important;
     height: auto !important;
     line-height: 1.4 !important;
 }
@@ -254,11 +248,9 @@ button:disabled {
     color: #34D399 !important;
 }
 
-/* Tudo abaixo fica fora do print */
+/* Elementos administrativos não aparecem na imagem */
 
 .card.capturando .btn-api,
-.card.capturando .btn-backup,
-.card.capturando .backup-section,
 .card.capturando .btn-check,
 .card.capturando .btn-manage,
 .card.capturando .gerenciar,
@@ -268,6 +260,34 @@ button:disabled {
 .card.capturando .ciclo-info {
     display: none !important;
 }
+
+/* Mobile */
+
+@media (max-width: 480px) {
+
+    body {
+        padding: 6px;
+    }
+
+    .card {
+        padding: 20px;
+    }
+
+    .input-group-row.topo {
+        gap: 6px;
+    }
+
+    .input-group-row.topo label {
+        font-size: .72em;
+    }
+
+    .input-group-row.topo input {
+        padding: 11px 6px;
+        font-size: 14px;
+    }
+
+}
+
 </style>
 </head>
 
@@ -278,136 +298,219 @@ button:disabled {
 <h2>🍀 💰 Conferidor Mega-Sena 💰 🍀</h2>
 
 <div id="status">
-Clique em Buscar Automático para carregar o último resultado
+Clique em Buscar Resultado para carregar o último sorteio
 </div>
 
-<div class="ciclo-info" id="ciclo-info"></div>
+<!-- CONTROLE INTERNO - NÃO APARECE NO PRINT -->
+<div
+class="ciclo-info"
+id="ciclo-info">
+</div>
 
-<div class="input-group-row">
+<!-- =====================================================
+     CONCURSO / DATA / RESTANTES / ACUMULOU
+===================================================== -->
 
-<div style="flex:1.2">
+<div class="input-group-row topo">
+
+<div
+class="campo"
+style="flex:.85">
+
 <label>Concurso</label>
-<input type="number" id="concurso" placeholder="Ex: 3061">
+
+<input
+type="number"
+id="concurso"
+readonly>
+
 </div>
 
-<div style="flex:.9">
+
+<div
+class="campo"
+style="flex:1.15">
+
+<label>Data</label>
+
+<input
+type="text"
+id="data-sorteio"
+readonly
+style="text-align:center">
+
+</div>
+
+
+<div
+class="campo"
+style="flex:.75">
+
 <label>Restantes</label>
-<input type="number" id="restantes" value="12" readonly>
+
+<input
+type="number"
+id="restantes"
+value="12"
+readonly
+style="text-align:center">
+
 </div>
 
-<div style="flex:1.1">
+
+<div
+class="campo"
+style="flex:1">
+
 <label>Acumulou?</label>
+
 <input
 type="text"
 id="acumulou"
 readonly
-style="font-weight:bold;text-align:center">
+style="
+font-weight:bold;
+text-align:center;
+">
+
 </div>
 
 </div>
+
 
 <button
 class="btn-api"
 id="btn-buscar"
 onclick="buscarResultado()">
-🔄 1. Buscar Automático
+
+🔄 Buscar Resultado
+
 </button>
 
-<div class="backup-section">
 
-<div style="
-font-size:.8em;
-color:#9CA3AF;
-text-align:center;
-margin-bottom:8px;
-">
-Se a busca automática falhar, importe o arquivo da Caixa.
-Agora você também pode selecionar vários arquivos.
-</div>
+<!-- =====================================================
+     PRÊMIOS
+===================================================== -->
+
+<div
+class="input-group-row"
+style="margin-top:18px">
+
+<div style="flex:1">
+
+<label>
+Prêmio Sorteado (R$)
+</label>
 
 <input
-type="file"
-id="arquivo-caixa"
-accept=".json,.txt,.html"
-multiple
-style="display:none"
-onchange="importarArquivos(event)"
->
-
-<button
-class="btn-backup"
-onclick="document.getElementById('arquivo-caixa').click()">
-📁 2. Importar Resultado(s)
-</button>
+type="text"
+id="premio"
+readonly>
 
 </div>
 
-<div class="input-group-row">
 
 <div style="flex:1">
-<label>Prêmio Sorteado (R$)</label>
-<input type="text" id="premio">
-</div>
 
-<div style="flex:1">
-<label>Próximo Prêmio (R$)</label>
+<label>
+Próximo Prêmio (R$)
+</label>
+
 <input
 type="text"
 id="proximo-premio"
-style="color:#F59E0B;font-weight:bold">
-</div>
+readonly
+style="
+color:#F59E0B;
+font-weight:bold
+">
 
 </div>
 
-<label>Números Sorteados</label>
+</div>
+
+
+<!-- =====================================================
+     DEZENAS
+===================================================== -->
+
+<label>
+Números Sorteados
+</label>
 
 <div class="sorteados-container">
-<input type="number" id="s1" min="1" max="60">
-<input type="number" id="s2" min="1" max="60">
-<input type="number" id="s3" min="1" max="60">
-<input type="number" id="s4" min="1" max="60">
-<input type="number" id="s5" min="1" max="60">
-<input type="number" id="s6" min="1" max="60">
+
+<input type="number" id="s1" readonly>
+<input type="number" id="s2" readonly>
+<input type="number" id="s3" readonly>
+<input type="number" id="s4" readonly>
+<input type="number" id="s5" readonly>
+<input type="number" id="s6" readonly>
+
 </div>
+
 
 <button
 class="btn-check"
 style="margin-top:20px"
 onclick="conferir()">
+
 Conferir Meus Jogos 🎯
+
 </button>
+
 
 <button
 class="btn-manage"
 onclick="abrirGerenciador()">
+
 ⚙️ Gerenciar Jogos
+
 </button>
 
-<div id="gerenciar" class="gerenciar"></div>
 
-<div id="alerta" class="alerta-vitoria"></div>
+<div
+id="gerenciar"
+class="gerenciar">
+</div>
 
-<div id="resultado-box" class="resultado">
+
+<div
+id="alerta"
+class="alerta-vitoria">
+</div>
+
+
+<div
+id="resultado-box"
+class="resultado">
 
 <div id="lista-acertos"></div>
+
 
 <button
 class="btn-whatsapp"
 id="btn-wa"
 onclick="copiarWhatsApp()">
+
 Copiar para WhatsApp 📱
+
 </button>
+
 
 <button
 class="btn-foto"
 id="btn-foto"
 onclick="gerarFotoResultado()">
+
 Salvar Imagem do Resultado 📸
+
 </button>
 
 </div>
 
 </div>
+
 
 <script>
 
@@ -418,17 +521,52 @@ Salvar Imagem do Resultado 📸
 const TOTAL_CICLO = 12;
 
 const jogosOriginais = [
-    { dono:"Victor",  numeros:[1,6,14,17,24,57] },
-    { dono:"Marcelo", numeros:[5,10,23,37,40,53] },
-    { dono:"William", numeros:[17,23,36,37,45,53] },
-    { dono:"Paulo",   numeros:[5,10,27,37,40,58] },
-    { dono:"Carlos",  numeros:[11,19,25,33,45,46] },
-    { dono:"Lau",     numeros:[3,8,9,23,30,34] },
-    { dono:"Neto",    numeros:[4,6,16,32,38,50] },
-    { dono:"Maycon",  numeros:[5,10,17,22,33,38] }
+
+    {
+        dono:"Victor",
+        numeros:[1,6,14,17,24,57]
+    },
+
+    {
+        dono:"Marcelo",
+        numeros:[5,10,23,37,40,53]
+    },
+
+    {
+        dono:"William",
+        numeros:[17,23,36,37,45,53]
+    },
+
+    {
+        dono:"Paulo",
+        numeros:[5,10,27,37,40,58]
+    },
+
+    {
+        dono:"Carlos",
+        numeros:[11,19,25,33,45,46]
+    },
+
+    {
+        dono:"Lau",
+        numeros:[3,8,9,23,30,34]
+    },
+
+    {
+        dono:"Neto",
+        numeros:[4,6,16,32,38,50]
+    },
+
+    {
+        dono:"Maycon",
+        numeros:[5,10,17,22,33,38]
+    }
+
 ];
 
+
 let meusJogos = [];
+
 let concursosCiclo = [];
 
 
@@ -436,35 +574,60 @@ let concursosCiclo = [];
    INICIALIZAÇÃO
 ========================================================= */
 
-document.addEventListener("DOMContentLoaded", () => {
-    carregarJogos();
-    carregarCiclo();
-    atualizarRestantes();
-    montarGerenciador();
-});
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
 
+        carregarJogos();
+
+        carregarCiclo();
+
+        atualizarRestantes();
+
+        montarGerenciador();
+
+    }
+);
+
+
+/* =========================================================
+   JOGOS
+========================================================= */
 
 function carregarJogos() {
 
     const salvo =
-        localStorage.getItem("mega_jogos_v2");
+        localStorage.getItem(
+            "mega_jogos_v2"
+        );
 
     if (salvo) {
 
         try {
-            meusJogos = JSON.parse(salvo);
-        } catch {
+
             meusJogos =
                 JSON.parse(
-                    JSON.stringify(jogosOriginais)
+                    salvo
                 );
+
+        } catch {
+
+            meusJogos =
+                JSON.parse(
+                    JSON.stringify(
+                        jogosOriginais
+                    )
+                );
+
         }
 
     } else {
 
         meusJogos =
             JSON.parse(
-                JSON.stringify(jogosOriginais)
+                JSON.stringify(
+                    jogosOriginais
+                )
             );
 
     }
@@ -472,17 +635,29 @@ function carregarJogos() {
 }
 
 
+/* =========================================================
+   CICLO
+========================================================= */
+
 function carregarCiclo() {
 
     try {
 
         concursosCiclo =
             JSON.parse(
-                localStorage.getItem("mega_ciclo_v2") || "[]"
+                localStorage.getItem(
+                    "mega_ciclo_v2"
+                ) || "[]"
             );
 
-        if (!Array.isArray(concursosCiclo)) {
+        if (
+            !Array.isArray(
+                concursosCiclo
+            )
+        ) {
+
             concursosCiclo = [];
+
         }
 
     } catch {
@@ -494,35 +669,68 @@ function carregarCiclo() {
 }
 
 
-/* =========================================================
-   CONTROLE DAS 12 TEIMOSINHAS
-========================================================= */
-
 function registrarConcurso(numero) {
 
-    numero = parseInt(numero);
+    numero =
+        parseInt(
+            numero
+        );
 
-    if (!numero) return;
+    if (!numero) {
+        return;
+    }
 
-    if (concursosCiclo.includes(numero)) {
+
+    /*
+    Não permite contar o mesmo
+    concurso duas vezes.
+    */
+
+    if (
+        concursosCiclo.includes(
+            numero
+        )
+    ) {
+
         atualizarRestantes();
+
         return;
+
     }
 
-    if (concursosCiclo.length >= TOTAL_CICLO) {
+
+    /*
+    Não ultrapassa os
+    12 concursos do ciclo.
+    */
+
+    if (
+        concursosCiclo.length >=
+        TOTAL_CICLO
+    ) {
+
         return;
+
     }
 
-    concursosCiclo.push(numero);
+
+    concursosCiclo.push(
+        numero
+    );
+
 
     concursosCiclo.sort(
         (a,b) => a-b
     );
 
+
     localStorage.setItem(
         "mega_ciclo_v2",
-        JSON.stringify(concursosCiclo)
+        JSON.stringify(
+            concursosCiclo
+        )
     );
+
 
     atualizarRestantes();
 
@@ -534,32 +742,46 @@ function atualizarRestantes() {
     const utilizados =
         concursosCiclo.length;
 
+
     const restantes =
         Math.max(
             0,
-            TOTAL_CICLO - utilizados
+            TOTAL_CICLO -
+            utilizados
         );
+
 
     document.getElementById(
         "restantes"
-    ).value = restantes;
+    ).value =
+        restantes;
+
 
     const info =
         document.getElementById(
             "ciclo-info"
         );
 
-    if (utilizados === 0) {
+
+    if (
+        utilizados === 0
+    ) {
 
         info.innerText =
             "Novo ciclo • 12 concursos restantes";
 
-    } else if (restantes > 0) {
+    }
+
+    else if (
+        restantes > 0
+    ) {
 
         info.innerText =
             `${utilizados}/12 concursos registrados`;
 
-    } else {
+    }
+
+    else {
 
         info.innerText =
             "12/12 concursos registrados • ciclo concluído";
@@ -580,14 +802,23 @@ function abrirGerenciador() {
             "gerenciar"
         );
 
-    if (box.style.display === "block") {
 
-        box.style.display = "none";
+    if (
+        box.style.display ===
+        "block"
+    ) {
 
-    } else {
+        box.style.display =
+            "none";
+
+    }
+
+    else {
 
         montarGerenciador();
-        box.style.display = "block";
+
+        box.style.display =
+            "block";
 
     }
 
@@ -601,23 +832,32 @@ function montarGerenciador() {
             "gerenciar"
         );
 
+
     let html = `
+
         <div style="
         color:#2ebd59;
         font-weight:800;
         margin-bottom:5px;
         ">
+
         Jogos cadastrados
+
         </div>
+
 
         <div style="
         color:#9CA3AF;
         font-size:.75em;
         margin-bottom:8px;
         ">
+
         Digite exatamente 6 números entre 1 e 60.
+
         </div>
+
     `;
+
 
     meusJogos.forEach(
         (jogo,i) => {
@@ -630,8 +870,11 @@ function montarGerenciador() {
             color:#60A5FA;
             font-weight:700;
             ">
+
             👤 ${jogo.dono}
+
             </div>
+
 
             <input
             id="edit-${i}"
@@ -639,11 +882,16 @@ function montarGerenciador() {
                 jogo.numeros
                 .map(
                     n =>
-                    String(n).padStart(2,"0")
+                    String(n)
+                    .padStart(
+                        2,
+                        "0"
+                    )
                 )
                 .join(" ")
             }"
             >
+
 
             <button
             class="btn-check"
@@ -652,7 +900,9 @@ function montarGerenciador() {
             margin-top:7px;
             "
             onclick="salvarJogo(${i})">
+
             Salvar
+
             </button>
 
             </div>
@@ -662,7 +912,9 @@ function montarGerenciador() {
         }
     );
 
-    box.innerHTML = html;
+
+    box.innerHTML =
+        html;
 
 }
 
@@ -671,8 +923,10 @@ function salvarJogo(index) {
 
     const texto =
         document.getElementById(
-            "edit-" + index
+            "edit-" +
+            index
         ).value;
+
 
     const numeros =
         texto
@@ -680,7 +934,12 @@ function salvarJogo(index) {
         .filter(Boolean)
         .map(Number);
 
-    if (!validarDezenas(numeros)) {
+
+    if (
+        !validarDezenas(
+            numeros
+        )
+    ) {
 
         alert(
             "Informe exatamente 6 números únicos entre 1 e 60."
@@ -690,19 +949,27 @@ function salvarJogo(index) {
 
     }
 
+
     numeros.sort(
-        (a,b) => a-b
+        (a,b) =>
+        a-b
     );
+
 
     meusJogos[index].numeros =
         numeros;
 
+
     localStorage.setItem(
         "mega_jogos_v2",
-        JSON.stringify(meusJogos)
+        JSON.stringify(
+            meusJogos
+        )
     );
 
+
     montarGerenciador();
+
 
     alert(
         `Jogo de ${meusJogos[index].dono} salvo!`
@@ -715,17 +982,25 @@ function salvarJogo(index) {
    VALIDAÇÃO
 ========================================================= */
 
-function validarDezenas(numeros) {
+function validarDezenas(
+    numeros
+) {
 
     return (
+
         numeros.length === 6 &&
-        new Set(numeros).size === 6 &&
+
+        new Set(
+            numeros
+        ).size === 6 &&
+
         numeros.every(
             n =>
             Number.isInteger(n) &&
             n >= 1 &&
             n <= 60
         )
+
     );
 
 }
@@ -733,38 +1008,59 @@ function validarDezenas(numeros) {
 
 function getSorteados() {
 
-    return [1,2,3,4,5,6]
-        .map(
-            i =>
-            parseInt(
-                document.getElementById(
-                    "s" + i
-                ).value
-            )
+    return [
+        1,2,3,4,5,6
+    ]
+
+    .map(
+        i =>
+        parseInt(
+            document.getElementById(
+                "s" + i
+            ).value
         )
-        .filter(Number.isFinite);
+    )
+
+    .filter(
+        Number.isFinite
+    );
 
 }
 
 
 /* =========================================================
-   FORMATAÇÃO DE VALORES
+   FORMATAÇÃO
 ========================================================= */
 
-function formatarValor(valor) {
+function formatarValor(
+    valor
+) {
 
     const numero =
-        Number(valor);
+        Number(
+            valor
+        );
 
-    if (!Number.isFinite(numero)) {
+
+    if (
+        !Number.isFinite(
+            numero
+        )
+    ) {
+
         return "---";
+
     }
+
 
     return numero.toLocaleString(
         "pt-BR",
         {
+
             minimumFractionDigits:2,
+
             maximumFractionDigits:2
+
         }
     );
 
@@ -773,7 +1069,6 @@ function formatarValor(valor) {
 
 /* =========================================================
    BUSCA AUTOMÁTICA
-   LÊ O resultado.json GERADO PELO GITHUB ACTIONS
 ========================================================= */
 
 async function buscarResultado() {
@@ -783,36 +1078,52 @@ async function buscarResultado() {
             "status"
         );
 
+
     const botao =
         document.getElementById(
             "btn-buscar"
         );
 
+
     status.innerText =
         "Buscando resultado atualizado...";
+
 
     status.style.color =
         "#F59E0B";
 
-    botao.disabled = true;
+
+    botao.disabled =
+        true;
+
 
     try {
 
+
         /*
-        O ?t= impede que o navegador utilize
-        uma cópia antiga do resultado.json.
+        Busca exclusivamente o arquivo
+        gerado pelo GitHub Actions.
+
+        O parâmetro ?t evita cache antigo.
         */
 
         const response =
             await fetch(
+
                 "./resultado.json?t=" +
                 Date.now(),
+
                 {
-                    cache:"no-store"
+                    cache:
+                    "no-store"
                 }
+
             );
 
-        if (!response.ok) {
+
+        if (
+            !response.ok
+        ) {
 
             throw new Error(
                 "HTTP " +
@@ -821,21 +1132,25 @@ async function buscarResultado() {
 
         }
 
+
         const data =
             await response.json();
 
 
-        /* -------------------------
+        /* ===========================
            CONCURSO
-        ------------------------- */
+        =========================== */
 
         const concurso =
             Number(
                 data.concurso
             );
 
+
         if (
-            !Number.isInteger(concurso) ||
+            !Number.isInteger(
+                concurso
+            ) ||
             concurso <= 0
         ) {
 
@@ -846,14 +1161,46 @@ async function buscarResultado() {
         }
 
 
-        /* -------------------------
+        /* ===========================
+           DATA
+        =========================== */
+
+        const dataSorteio =
+            String(
+                data.data || ""
+            ).trim();
+
+
+        if (
+            !dataSorteio
+        ) {
+
+            throw new Error(
+                "Data do sorteio não encontrada."
+            );
+
+        }
+
+
+        /* ===========================
            DEZENAS
-        ------------------------- */
+        =========================== */
 
         const dezenas =
-            Array.isArray(data.dezenas)
-            ? data.dezenas.map(Number)
-            : [];
+            Array.isArray(
+                data.dezenas
+            )
+
+            ?
+
+            data.dezenas.map(
+                Number
+            )
+
+            :
+
+            [];
+
 
         if (
             !validarDezenas(
@@ -862,38 +1209,33 @@ async function buscarResultado() {
         ) {
 
             throw new Error(
-                "As seis dezenas são inválidas."
+                "Resultado possui dezenas inválidas."
             );
 
         }
 
 
-        /* -------------------------
+        /* ===========================
            ACUMULOU
-        ------------------------- */
+        =========================== */
 
-        let acumulado = false;
-
-        if (data.acumulou === true) {
-            acumulado = true;
-        }
-
-        if (
-            String(data.acumulou)
-            .toLowerCase() === "true"
-        ) {
-            acumulado = true;
-        }
+        const acumulado =
+            data.acumulou === true ||
+            String(
+                data.acumulou
+            ).toLowerCase() ===
+            "true";
 
 
-        /* -------------------------
+        /* ===========================
            PRÊMIOS
-        ------------------------- */
+        =========================== */
 
         const premioSorteado =
             Number(
                 data.premioSorteado
             );
+
 
         const proximoPremio =
             Number(
@@ -901,15 +1243,17 @@ async function buscarResultado() {
             );
 
 
-        /* -------------------------
-           NORMALIZA PARA O FORMATO
-           QUE O SITE JÁ UTILIZA
-        ------------------------- */
+        /* ===========================
+           OBJETO INTERNO
+        =========================== */
 
         const resultado = {
 
             numero:
                 concurso,
+
+            data:
+                dataSorteio,
 
             dezenas:
                 dezenas,
@@ -921,22 +1265,22 @@ async function buscarResultado() {
                 Number.isFinite(
                     premioSorteado
                 )
-                ? premioSorteado
-                : 0,
+                ?
+                premioSorteado
+                :
+                0,
 
             proximo:
                 Number.isFinite(
                     proximoPremio
                 )
-                ? proximoPremio
-                : 0
+                ?
+                proximoPremio
+                :
+                0
 
         };
 
-
-        /* -------------------------
-           PREENCHE A TELA
-        ------------------------- */
 
         preencherResultado(
             resultado
@@ -946,243 +1290,40 @@ async function buscarResultado() {
         status.innerText =
             `Sorteio ${concurso} atualizado com sucesso!`;
 
+
         status.style.color =
             "#2ebd59";
 
 
-    } catch(error) {
+    }
+
+    catch(error) {
+
 
         console.error(
             "Erro na busca automática:",
             error
         );
 
+
         status.innerText =
-            "Busca automática indisponível. Use a importação.";
+            "Não foi possível carregar o resultado.";
+
 
         status.style.color =
             "#EF4444";
 
-    } finally {
-
-        botao.disabled = false;
 
     }
 
-}
+    finally {
 
 
-/* =========================================================
-   NORMALIZADOR PARA IMPORTAÇÃO MANUAL
-========================================================= */
+        botao.disabled =
+            false;
 
-function normalizarResultado(data) {
-
-    const numero =
-        Number(
-            data.numero ??
-            data.concurso
-        );
-
-    const dezenas =
-        (
-            data.listaDezenas ??
-            data.dezenas ??
-            []
-        )
-        .map(Number);
-
-    if (
-        !Number.isInteger(numero) ||
-        !validarDezenas(dezenas)
-    ) {
-
-        throw new Error(
-            "Resultado inválido"
-        );
 
     }
-
-    const acumulado =
-        Boolean(
-            data.acumulado ??
-            data.acumulou
-        );
-
-    const proximo =
-        Number(
-            data.valorEstimadoProximoConcurso ??
-            data.proximoPremio ??
-            0
-        );
-
-    let premio =
-        Number(
-            data.premioSorteado ??
-            0
-        );
-
-    if (
-        !premio &&
-        data.listaRateioPremio &&
-        data.listaRateioPremio[0]
-    ) {
-
-        premio =
-            Number(
-                data.listaRateioPremio[0]
-                .valorPremio || 0
-            );
-
-    }
-
-    if (
-        !premio &&
-        data.premiacoes &&
-        data.premiacoes[0]
-    ) {
-
-        premio =
-            Number(
-                data.premiacoes[0]
-                .premio || 0
-            );
-
-    }
-
-    return {
-        numero,
-        dezenas,
-        acumulado,
-        premio,
-        proximo
-    };
-
-}
-
-
-/* =========================================================
-   IMPORTAÇÃO - UM OU VÁRIOS ARQUIVOS
-========================================================= */
-
-function extrairJSON(texto) {
-
-    let conteudo =
-        texto.trim();
-
-    const pre =
-        conteudo.match(
-            /<pre[^>]*>([\s\S]*?)<\/pre>/i
-        );
-
-    if (pre) {
-        conteudo = pre[1];
-    }
-
-    conteudo =
-        conteudo
-        .replace(/<[^>]+>/g,"")
-        .replace(/&quot;/g,'"')
-        .replace(/&amp;/g,"&")
-        .trim();
-
-    return JSON.parse(
-        conteudo
-    );
-
-}
-
-
-async function importarArquivos(event) {
-
-    const arquivos =
-        Array.from(
-            event.target.files
-        );
-
-    if (!arquivos.length) {
-        return;
-    }
-
-    const resultados = [];
-    const erros = [];
-
-    for (const arquivo of arquivos) {
-
-        try {
-
-            const texto =
-                await arquivo.text();
-
-            const json =
-                extrairJSON(texto);
-
-            const resultado =
-                normalizarResultado(json);
-
-            resultados.push(
-                resultado
-            );
-
-        } catch(error) {
-
-            erros.push(
-                arquivo.name
-            );
-
-        }
-
-    }
-
-    resultados.sort(
-        (a,b) =>
-        a.numero - b.numero
-    );
-
-    resultados.forEach(
-        resultado => {
-
-            registrarConcurso(
-                resultado.numero
-            );
-
-        }
-    );
-
-    if (resultados.length) {
-
-        const ultimo =
-            resultados[
-                resultados.length - 1
-            ];
-
-        preencherResultado(
-            ultimo
-        );
-
-        const status =
-            document.getElementById(
-                "status"
-            );
-
-        status.innerText =
-            `${resultados.length} resultado(s) importado(s). Último: ${ultimo.numero}`;
-
-        status.style.color =
-            "#2ebd59";
-
-    }
-
-    if (erros.length) {
-
-        alert(
-            "Não consegui ler:\n" +
-            erros.join("\n")
-        );
-
-    }
-
-    event.target.value = "";
 
 }
 
@@ -1191,7 +1332,10 @@ async function importarArquivos(event) {
    PREENCHER RESULTADO
 ========================================================= */
 
-function preencherResultado(resultado) {
+function preencherResultado(
+    resultado
+) {
+
 
     document.getElementById(
         "concurso"
@@ -1199,29 +1343,44 @@ function preencherResultado(resultado) {
         resultado.numero;
 
 
+    document.getElementById(
+        "data-sorteio"
+    ).value =
+        resultado.data || "---";
+
+
     const acumulou =
         document.getElementById(
             "acumulou"
         );
 
+
     acumulou.value =
         resultado.acumulado
-        ? "SIM! 🚀"
-        : "NÃO 🎯";
+        ?
+        "SIM! 🚀"
+        :
+        "NÃO 🎯";
+
 
     acumulou.style.color =
         resultado.acumulado
-        ? "#34D399"
-        : "#60A5FA";
+        ?
+        "#34D399"
+        :
+        "#60A5FA";
 
 
     resultado.dezenas.forEach(
         (numero,index) => {
 
+
             document.getElementById(
-                "s" + (index + 1)
+                "s" +
+                (index + 1)
             ).value =
                 numero;
+
 
         }
     );
@@ -1230,21 +1389,35 @@ function preencherResultado(resultado) {
     document.getElementById(
         "premio"
     ).value =
+
         resultado.premio
-        ? formatarValor(
+
+        ?
+
+        formatarValor(
             resultado.premio
         )
-        : "--- (Edite o valor)";
+
+        :
+
+        "---";
 
 
     document.getElementById(
         "proximo-premio"
     ).value =
+
         resultado.proximo
-        ? formatarValor(
+
+        ?
+
+        formatarValor(
             resultado.proximo
         )
-        : "---";
+
+        :
+
+        "---";
 
 }
 
@@ -1255,8 +1428,10 @@ function preencherResultado(resultado) {
 
 function conferir() {
 
+
     const sorteados =
         getSorteados();
+
 
     if (
         !validarDezenas(
@@ -1264,54 +1439,76 @@ function conferir() {
         )
     ) {
 
+
         alert(
-            "Preencha 6 dezenas únicas entre 1 e 60."
+            "Carregue um resultado válido primeiro."
         );
+
 
         return;
 
     }
+
 
     const concurso =
         document.getElementById(
             "concurso"
         ).value;
 
-    if (concurso) {
+
+    if (
+        concurso
+    ) {
+
 
         registrarConcurso(
             concurso
         );
 
+
     }
+
 
     const lista =
         document.getElementById(
             "lista-acertos"
         );
 
+
     lista.style.display =
         "grid";
+
 
     lista.style.gridTemplateColumns =
         "1fr 1fr";
 
+
     lista.style.gap =
         "10px";
 
-    let html = "";
-    let maxAcertos = 0;
+
+    let html =
+        "";
+
+
+    let maxAcertos =
+        0;
 
 
     meusJogos.forEach(
         jogoObj => {
 
-            let acertos = 0;
+
+            let acertos =
+                0;
+
 
             const jogoHtml =
                 jogoObj.numeros
+
                 .map(
                     numero => {
+
 
                         const formatado =
                             numero
@@ -1321,15 +1518,19 @@ function conferir() {
                                 "0"
                             );
 
+
                         if (
                             sorteados.includes(
                                 numero
                             )
                         ) {
 
+
                             acertos++;
 
+
                             return `
+
                             <span style="
                             display:inline-block;
                             background:linear-gradient(145deg,#34D399,#10B981);
@@ -1340,12 +1541,19 @@ function conferir() {
                             margin:0 1px;
                             box-shadow:0 2px 4px rgba(0,0,0,.3);
                             ">
+
                             ${formatado}
-                            </span>`;
+
+                            </span>
+
+                            `;
+
 
                         }
 
+
                         return `
+
                         <span style="
                         display:inline-block;
                         background:#374151;
@@ -1355,12 +1563,19 @@ function conferir() {
                         font-weight:700;
                         margin:0 1px;
                         ">
+
                         ${formatado}
-                        </span>`;
+
+                        </span>
+
+                        `;
+
 
                     }
                 )
+
                 .join("");
+
 
             maxAcertos =
                 Math.max(
@@ -1368,22 +1583,40 @@ function conferir() {
                     acertos
                 );
 
-            let faixa = "";
 
-            if (acertos === 4) {
+            let faixa =
+                "";
+
+
+            if (
+                acertos === 4
+            ) {
+
                 faixa =
                     "🏅 QUADRA";
+
             }
 
-            if (acertos === 5) {
+
+            if (
+                acertos === 5
+            ) {
+
                 faixa =
                     "🔥 QUINA";
+
             }
 
-            if (acertos === 6) {
+
+            if (
+                acertos === 6
+            ) {
+
                 faixa =
                     "👑 SENA";
+
             }
+
 
             html += `
 
@@ -1398,6 +1631,7 @@ function conferir() {
             justify-content:space-between;
             ">
 
+
             <div style="
             display:flex;
             justify-content:space-between;
@@ -1407,37 +1641,49 @@ function conferir() {
             margin-bottom:10px;
             ">
 
+
             <span style="
             font-size:.9em;
             color:#60A5FA;
             font-weight:700;
             white-space:nowrap;
             ">
+
             👤 ${jogoObj.dono}
+
             </span>
+
 
             <span style="
             font-size:.85em;
             color:${acertos >= 4 ? "#34D399" : "#9CA3AF"};
             font-weight:700;
             ">
+
             🎯 ${acertos} acertos
+
             </span>
 
+
             </div>
+
 
             <div style="
             font-size:1.05em;
             text-align:center;
             white-space:nowrap;
             ">
+
             ${jogoHtml}
+
             </div>
+
 
             ${
                 faixa
                 ?
                 `
+
                 <div style="
                 margin-top:10px;
                 text-align:center;
@@ -1448,16 +1694,21 @@ function conferir() {
                 border-radius:4px;
                 padding:4px;
                 ">
+
                 ${faixa}
+
                 </div>
+
                 `
                 :
                 ""
             }
 
+
             </div>
 
             `;
+
 
         }
     );
@@ -1491,43 +1742,70 @@ function conferir() {
         );
 
 
-    if (maxAcertos >= 4) {
+    if (
+        maxAcertos >= 4
+    ) {
 
-        if (maxAcertos === 6) {
+
+        if (
+            maxAcertos === 6
+        ) {
+
 
             alerta.innerHTML =
                 "👑 ACERTAMOS AS SEIS DEZENAS! 🤑 👑";
 
+
             alerta.style.background =
                 "linear-gradient(135deg,#D97706,#92400E)";
 
-        } else if (
+
+        }
+
+
+        else if (
             maxAcertos === 5
         ) {
+
 
             alerta.innerHTML =
                 "🔥 ACERTAMOS A QUINA! 🤑 🔥";
 
+
             alerta.style.background =
                 "linear-gradient(135deg,#064E3B,#047857)";
 
-        } else {
+
+        }
+
+
+        else {
+
 
             alerta.innerHTML =
                 "🏅 ACERTAMOS A QUADRA! 🤑 🏅";
 
+
             alerta.style.background =
                 "linear-gradient(135deg,#064E3B,#047857)";
 
+
         }
+
 
         alerta.style.display =
             "block";
 
-    } else {
+
+    }
+
+
+    else {
+
 
         alerta.style.display =
             "none";
+
 
     }
 
@@ -1535,13 +1813,15 @@ function conferir() {
 
 
 /* =========================================================
-   WHATSAPP
+   WHATSAPP TEXTO
 ========================================================= */
 
 function copiarWhatsApp() {
 
+
     const sorteados =
         getSorteados();
+
 
     if (
         !validarDezenas(
@@ -1549,33 +1829,46 @@ function copiarWhatsApp() {
         )
     ) {
 
+
         alert(
             "Não há resultado completo para copiar!"
         );
 
+
         return;
 
     }
+
 
     const concurso =
         document.getElementById(
             "concurso"
         ).value || "---";
 
+
+    const data =
+        document.getElementById(
+            "data-sorteio"
+        ).value || "---";
+
+
     const premio =
         document.getElementById(
             "premio"
         ).value || "---";
+
 
     const proximo =
         document.getElementById(
             "proximo-premio"
         ).value || "---";
 
+
     const acumulou =
         document.getElementById(
             "acumulou"
         ).value || "---";
+
 
     const restantes =
         document.getElementById(
@@ -1584,12 +1877,16 @@ function copiarWhatsApp() {
 
 
     let texto =
+
 `🍀 *RESUMO MEGA-SENA*
+
 🔢 *Concurso:* ${concurso}
+📅 *Data:* ${data}
 💰 *Prêmio Concurso:* R$ ${premio}
 🚀 *Acumulou:* ${acumulou}
 🔮 *Próximo Prêmio:* R$ ${proximo}
 ✨ *Resultado:* ${sorteados.map(n => n.toString().padStart(2,"0")).join(" ")}
+
 --------------------------
 `;
 
@@ -1597,16 +1894,22 @@ function copiarWhatsApp() {
     meusJogos.forEach(
         jogo => {
 
+
             const acertos =
                 jogo.numeros.filter(
                     n =>
-                    sorteados.includes(n)
+                    sorteados.includes(
+                        n
+                    )
                 ).length;
+
 
             const numeros =
                 jogo.numeros
+
                 .map(
                     n => {
+
 
                         const f =
                             n
@@ -1616,48 +1919,72 @@ function copiarWhatsApp() {
                                 "0"
                             );
 
-                        return sorteados.includes(n)
-                            ? `*${f}*`
-                            : f;
+
+                        return sorteados.includes(
+                            n
+                        )
+                        ?
+                        `*${f}*`
+                        :
+                        f;
+
 
                     }
                 )
+
                 .join("  ");
 
 
             texto +=
+
 `👤 *${jogo.dono}*
 🎲 ${numeros}`;
 
 
-            if (acertos > 0) {
+            if (
+                acertos > 0
+            ) {
+
 
                 texto +=
+
 `  -> *${acertos} ${acertos === 1 ? "acerto" : "acertos"}*`;
+
 
             }
 
-            texto += "\n\n";
+
+            texto +=
+                "\n\n";
+
 
         }
     );
 
 
     texto +=
+
 `--------------------------
 ⏳ *Sorteios restantes:* ${restantes}`;
 
 
     navigator.clipboard
-        .writeText(texto)
+
+        .writeText(
+            texto
+        )
+
         .then(
             () =>
+
             alert(
                 "Resumo copiado para o WhatsApp!"
             )
         )
+
         .catch(
             () =>
+
             alert(
                 "Erro ao copiar."
             )
@@ -1672,22 +1999,27 @@ function copiarWhatsApp() {
 
 async function gerarFotoResultado() {
 
+
     const card =
         document.querySelector(
             ".card"
         );
+
 
     const botao =
         document.getElementById(
             "btn-foto"
         );
 
+
     botao.innerText =
         "Gerando Imagem... ⌛";
+
 
     card.classList.add(
         "capturando"
     );
+
 
     await new Promise(
         resolve =>
@@ -1697,56 +2029,81 @@ async function gerarFotoResultado() {
         )
     );
 
+
     try {
+
 
         const canvas =
             await html2canvas(
                 card,
                 {
+
                     scale:2,
-                    backgroundColor:"#0F1115",
+
+                    backgroundColor:
+                        "#0F1115",
+
                     useCORS:true
+
                 }
             );
+
 
         const concurso =
             document.getElementById(
                 "concurso"
             ).value || "Mega";
 
+
         const link =
             document.createElement(
                 "a"
             );
 
+
         link.download =
             `Resultado_Mega_${concurso}.png`;
+
 
         link.href =
             canvas.toDataURL(
                 "image/png"
             );
 
+
         link.click();
 
-    } catch(error) {
+
+    }
+
+
+    catch(error) {
+
 
         console.error(
             error
         );
 
+
         alert(
             "Não foi possível gerar a imagem."
         );
 
-    } finally {
+
+    }
+
+
+    finally {
+
 
         card.classList.remove(
             "capturando"
         );
 
+
         botao.innerText =
             "Salvar Imagem do Resultado 📸";
+
 
     }
 
