@@ -1,0 +1,153 @@
+name: Atualizar resultado Mega-Sena
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/30 * * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  atualizar:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar repositorio
+        uses: actions/checkout@v4
+
+      - name: Buscar ultimo resultado
+        shell: python
+        run: |
+          import json
+          import urllib.request
+          from datetime import datetime, timezone
+
+          fontes = [
+              "https://api.guidi.dev.br/loteria/megasena/ultimo",
+              "https://loteriascaixa-api.herokuapp.com/api/megasena/latest"
+          ]
+
+          dados = None
+          fonte_usada = None
+
+          for url in fontes:
+              try:
+                  req = urllib.request.Request(
+                      url,
+                      headers={
+                          "User-Agent": "Mozilla/5.0",
+                          "Accept": "application/json"
+                      }
+                  )
+
+                  with urllib.request.urlopen(req, timeout=20) as resposta:
+                      candidato = json.loads(
+                          resposta.read().decode("utf-8")
+                      )
+
+                  if candidato:
+                      dados = candidato
+                      fonte_usada = url
+                      print("Resultado encontrado em:", url)
+                      break
+
+              except Exception as erro:
+                  print("Falha em", url, "-", erro)
+
+          if dados is None:
+              raise Exception("Nenhuma fonte retornou resultado.")
+
+          concurso = dados.get("numero") or dados.get("concurso")
+
+          dezenas = (
+              dados.get("listaDezenas")
+              or dados.get("dezenas")
+              or []
+          )
+
+          dezenas = [str(x).zfill(2) for x in dezenas]
+
+          if not concurso:
+              raise Exception("Numero do concurso nao encontrado.")
+
+          if len(dezenas) != 6:
+              raise Exception(
+                  f"Resultado invalido: {len(dezenas)} dezenas."
+              )
+
+          acumulou = (
+              dados.get("acumulado")
+              if "acumulado" in dados
+              else dados.get("acumulou")
+          )
+
+          proximo_premio = (
+              dados.get("valorEstimadoProximoConcurso")
+              or dados.get("valorEstimadoProximo")
+              or dados.get("proximoPremio")
+          )
+
+          premio_sena = None
+
+          rateio = (
+              dados.get("listaRateioPremio")
+              or dados.get("premiacoes")
+              or []
+          )
+
+          if rateio:
+              primeira = rateio[0]
+
+              premio_sena = (
+                  primeira.get("valorPremio")
+                  or primeira.get("premio")
+                  or primeira.get("valor")
+              )
+
+          resultado = {
+              "concurso": int(concurso),
+              "dezenas": dezenas,
+              "acumulou": acumulou,
+              "premioSena": premio_sena,
+              "proximoPremio": proximo_premio,
+              "fonte": fonte_usada,
+              "atualizadoEm": datetime.now(
+                  timezone.utc
+              ).isoformat()
+          }
+
+          with open(
+              "resultado.json",
+              "w",
+              encoding="utf-8"
+          ) as arquivo:
+              json.dump(
+                  resultado,
+                  arquivo,
+                  ensure_ascii=False,
+                  indent=2
+              )
+
+          print(
+              json.dumps(
+                  resultado,
+                  ensure_ascii=False,
+                  indent=2
+              )
+          )
+
+      - name: Salvar resultado no repositorio
+        run: |
+          git config user.name "mega-sena-bot"
+          git config user.email "actions@github.com"
+
+          git add resultado.json
+
+          if git diff --cached --quiet; then
+            echo "Nenhuma alteracao no resultado."
+            exit 0
+          fi
+
+          git commit -m "Atualiza resultado da Mega-Sena"
+          git push
