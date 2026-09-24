@@ -77,12 +77,6 @@ input {
     font-weight: 500;
 }
 
-input:focus {
-    border-color: #2ebd59;
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(46,189,89,.2);
-}
-
 .sorteados-container {
     display: grid;
     grid-template-columns: repeat(6,1fr);
@@ -194,9 +188,21 @@ button:disabled {
     border-bottom: none;
 }
 
-/* ========================================================= */
-/* PRINT DO WHATSAPP                                         */
-/* ========================================================= */
+.jogo-numeros {
+    margin-top: 7px;
+    color: #E5E7EB;
+    font-weight: 700;
+    letter-spacing: 2px;
+    background: #1F2937;
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+}
+
+
+/* =========================================================
+   PRINT / IMAGEM DO WHATSAPP
+========================================================= */
 
 .card.capturando {
     padding: 18px;
@@ -248,7 +254,10 @@ button:disabled {
     color: #34D399 !important;
 }
 
-/* Elementos administrativos não aparecem na imagem */
+/*
+Elementos administrativos não aparecem
+na imagem compartilhada.
+*/
 
 .card.capturando .btn-api,
 .card.capturando .btn-check,
@@ -261,29 +270,28 @@ button:disabled {
     display: none !important;
 }
 
-/* Mobile */
 
-@media (max-width: 480px) {
+@media (max-width:480px) {
 
     body {
-        padding: 6px;
+        padding:6px;
     }
 
     .card {
-        padding: 20px;
+        padding:20px;
     }
 
     .input-group-row.topo {
-        gap: 6px;
+        gap:6px;
     }
 
     .input-group-row.topo label {
-        font-size: .72em;
+        font-size:.72em;
     }
 
     .input-group-row.topo input {
-        padding: 11px 6px;
-        font-size: 14px;
+        padding:11px 6px;
+        font-size:14px;
     }
 
 }
@@ -291,21 +299,26 @@ button:disabled {
 </style>
 </head>
 
+
 <body>
 
 <div class="card">
 
-<h2>🍀 💰 Conferidor Mega-Sena 💰 🍀</h2>
+<h2>
+🍀 💰 Conferidor Mega-Sena 💰 🍀
+</h2>
+
 
 <div id="status">
-Clique em Buscar Resultado para carregar o último sorteio
+Carregando dados...
 </div>
 
-<!-- CONTROLE INTERNO - NÃO APARECE NO PRINT -->
+
 <div
 class="ciclo-info"
 id="ciclo-info">
 </div>
+
 
 <!-- =====================================================
      CONCURSO / DATA / RESTANTES / ACUMULOU
@@ -317,7 +330,9 @@ id="ciclo-info">
 class="campo"
 style="flex:.85">
 
-<label>Concurso</label>
+<label>
+Concurso
+</label>
 
 <input
 type="number"
@@ -331,7 +346,9 @@ readonly>
 class="campo"
 style="flex:1.15">
 
-<label>Data</label>
+<label>
+Data
+</label>
 
 <input
 type="text"
@@ -346,7 +363,9 @@ style="text-align:center">
 class="campo"
 style="flex:.75">
 
-<label>Restantes</label>
+<label>
+Restantes
+</label>
 
 <input
 type="number"
@@ -362,7 +381,9 @@ style="text-align:center">
 class="campo"
 style="flex:1">
 
-<label>Acumulou?</label>
+<label>
+Acumulou?
+</label>
 
 <input
 type="text"
@@ -381,7 +402,7 @@ text-align:center;
 <button
 class="btn-api"
 id="btn-buscar"
-onclick="buscarResultado()">
+onclick="carregarTudo()">
 
 🔄 Buscar Resultado
 
@@ -464,7 +485,7 @@ Conferir Meus Jogos 🎯
 class="btn-manage"
 onclick="abrirGerenciador()">
 
-⚙️ Gerenciar Jogos
+⚙️ Ver Jogos do Ciclo
 
 </button>
 
@@ -515,59 +536,14 @@ Salvar Imagem do Resultado 📸
 <script>
 
 /* =========================================================
-   CONFIGURAÇÃO
+   ESTADO DO SITE
 ========================================================= */
-
-const TOTAL_CICLO = 12;
-
-const jogosOriginais = [
-
-    {
-        dono:"Victor",
-        numeros:[1,6,14,17,24,57]
-    },
-
-    {
-        dono:"Marcelo",
-        numeros:[5,10,23,37,40,53]
-    },
-
-    {
-        dono:"William",
-        numeros:[17,23,36,37,45,53]
-    },
-
-    {
-        dono:"Paulo",
-        numeros:[5,10,27,37,40,58]
-    },
-
-    {
-        dono:"Carlos",
-        numeros:[11,19,25,33,45,46]
-    },
-
-    {
-        dono:"Lau",
-        numeros:[3,8,9,23,30,34]
-    },
-
-    {
-        dono:"Neto",
-        numeros:[4,6,16,32,38,50]
-    },
-
-    {
-        dono:"Maycon",
-        numeros:[5,10,17,22,33,38]
-    }
-
-];
-
 
 let meusJogos = [];
 
-let concursosCiclo = [];
+let dadosCiclo = null;
+
+let resultadoAtual = null;
 
 
 /* =========================================================
@@ -576,59 +552,251 @@ let concursosCiclo = [];
 
 document.addEventListener(
     "DOMContentLoaded",
-    () => {
+    async () => {
 
-        carregarJogos();
-
-        carregarCiclo();
-
-        atualizarRestantes();
-
-        montarGerenciador();
+        await carregarTudo();
 
     }
 );
 
 
 /* =========================================================
-   JOGOS
+   BUSCAR JSON SEM CACHE
 ========================================================= */
 
-function carregarJogos() {
+async function buscarJSON(
+    arquivo
+) {
 
-    const salvo =
-        localStorage.getItem(
-            "mega_jogos_v2"
+    const separador =
+        arquivo.includes("?")
+        ?
+        "&"
+        :
+        "?";
+
+    const response =
+        await fetch(
+            arquivo
+            + separador
+            + "t="
+            + Date.now(),
+            {
+                cache:"no-store"
+            }
         );
 
-    if (salvo) {
+    if (!response.ok) {
 
-        try {
+        throw new Error(
+            `Erro ao carregar ${arquivo}: HTTP ${response.status}`
+        );
 
-            meusJogos =
-                JSON.parse(
-                    salvo
-                );
+    }
 
-        } catch {
+    return await response.json();
 
-            meusJogos =
-                JSON.parse(
-                    JSON.stringify(
-                        jogosOriginais
-                    )
-                );
+}
+
+
+/* =========================================================
+   CARREGAR RESULTADO + CICLO
+========================================================= */
+
+async function carregarTudo() {
+
+    const status =
+        document.getElementById(
+            "status"
+        );
+
+    const botao =
+        document.getElementById(
+            "btn-buscar"
+        );
+
+    status.innerText =
+        "Buscando resultado e ciclo...";
+
+    status.style.color =
+        "#F59E0B";
+
+    botao.disabled =
+        true;
+
+
+    try {
+
+        /*
+        Carregamos os dois arquivos diretamente
+        do GitHub Pages.
+        */
+
+        const [
+            resultado,
+            ciclo
+        ] = await Promise.all([
+
+            buscarJSON(
+                "./resultado.json"
+            ),
+
+            buscarJSON(
+                "./ciclo.json"
+            )
+
+        ]);
+
+
+        validarResultado(
+            resultado
+        );
+
+        validarCiclo(
+            ciclo
+        );
+
+
+        dadosCiclo =
+            ciclo;
+
+
+        meusJogos =
+            ciclo.jogos.map(
+                jogo => ({
+                    dono:
+                        jogo.dono,
+
+                    numeros:
+                        jogo.numeros
+                        .map(Number)
+                        .sort(
+                            (a,b) => a-b
+                        )
+                })
+            );
+
+
+        resultadoAtual = {
+            numero:
+                Number(
+                    resultado.concurso
+                ),
+
+            data:
+                resultado.data || "---",
+
+            dezenas:
+                resultado.dezenas
+                .map(Number)
+                .sort(
+                    (a,b) => a-b
+                ),
+
+            acumulado:
+                resultado.acumulou === true
+                ||
+                String(
+                    resultado.acumulou
+                ).toLowerCase()
+                === "true",
+
+            premio:
+                Number(
+                    resultado.premioSorteado
+                ) || 0,
+
+            proximo:
+                Number(
+                    resultado.proximoPremio
+                ) || 0
+        };
+
+
+        preencherResultado(
+            resultadoAtual
+        );
+
+
+        atualizarInformacoesCiclo();
+
+
+        montarGerenciador();
+
+
+        /*
+        Verifica se o concurso exibido já
+        pertence ao histórico oficial.
+        */
+
+        const processado =
+            concursoJaProcessado(
+                resultadoAtual.numero
+            );
+
+
+        if (processado) {
+
+            status.innerText =
+                `Sorteio ${resultadoAtual.numero} processado e registrado no ciclo!`;
 
         }
 
-    } else {
+        else {
 
-        meusJogos =
-            JSON.parse(
-                JSON.stringify(
-                    jogosOriginais
-                )
-            );
+            const inicioPlanejado =
+                Number(
+                    dadosCiclo
+                    .concursoInicialPlanejado
+                );
+
+            if (
+                inicioPlanejado
+                &&
+                resultadoAtual.numero
+                <
+                inicioPlanejado
+            ) {
+
+                status.innerText =
+                    `Sorteio ${resultadoAtual.numero} atualizado • ciclo começa no ${inicioPlanejado}`;
+
+            }
+
+            else {
+
+                status.innerText =
+                    `Sorteio ${resultadoAtual.numero} atualizado • aguardando processamento do ciclo`;
+
+            }
+
+        }
+
+
+        status.style.color =
+            "#2ebd59";
+
+
+    }
+
+    catch(error) {
+
+        console.error(
+            error
+        );
+
+        status.innerText =
+            "Não foi possível carregar os dados.";
+
+        status.style.color =
+            "#EF4444";
+
+    }
+
+    finally {
+
+        botao.disabled =
+            false;
 
     }
 
@@ -636,119 +804,213 @@ function carregarJogos() {
 
 
 /* =========================================================
-   CICLO
+   VALIDAR RESULTADO.JSON
 ========================================================= */
 
-function carregarCiclo() {
+function validarResultado(
+    resultado
+) {
 
-    try {
+    const concurso =
+        Number(
+            resultado.concurso
+        );
 
-        concursosCiclo =
-            JSON.parse(
-                localStorage.getItem(
-                    "mega_ciclo_v2"
-                ) || "[]"
-            );
+    if (
+        !Number.isInteger(
+            concurso
+        )
+        ||
+        concurso <= 0
+    ) {
 
-        if (
-            !Array.isArray(
-                concursosCiclo
-            )
-        ) {
+        throw new Error(
+            "Concurso inválido em resultado.json"
+        );
 
-            concursosCiclo = [];
+    }
+
+
+    const dezenas =
+        Array.isArray(
+            resultado.dezenas
+        )
+        ?
+        resultado.dezenas.map(
+            Number
+        )
+        :
+        [];
+
+
+    if (
+        !validarDezenas(
+            dezenas
+        )
+    ) {
+
+        throw new Error(
+            "Dezenas inválidas em resultado.json"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   VALIDAR CICLO.JSON
+========================================================= */
+
+function validarCiclo(
+    ciclo
+) {
+
+    if (
+        !ciclo
+        ||
+        typeof ciclo !== "object"
+    ) {
+
+        throw new Error(
+            "ciclo.json inválido"
+        );
+
+    }
+
+
+    if (
+        !Array.isArray(
+            ciclo.jogos
+        )
+        ||
+        ciclo.jogos.length === 0
+    ) {
+
+        throw new Error(
+            "Nenhum jogo encontrado no ciclo.json"
+        );
+
+    }
+
+
+    ciclo.jogos.forEach(
+        jogo => {
+
+            const numeros =
+                Array.isArray(
+                    jogo.numeros
+                )
+                ?
+                jogo.numeros.map(
+                    Number
+                )
+                :
+                [];
+
+
+            if (
+                !jogo.dono
+                ||
+                !validarDezenas(
+                    numeros
+                )
+            ) {
+
+                throw new Error(
+                    "Existe um jogo inválido no ciclo.json"
+                );
+
+            }
 
         }
-
-    } catch {
-
-        concursosCiclo = [];
-
-    }
+    );
 
 }
 
 
-function registrarConcurso(numero) {
+/* =========================================================
+   VALIDAR DEZENAS
+========================================================= */
 
-    numero =
-        parseInt(
-            numero
-        );
+function validarDezenas(
+    numeros
+) {
 
-    if (!numero) {
-        return;
-    }
+    return (
 
+        numeros.length === 6
 
-    /*
-    Não permite contar o mesmo
-    concurso duas vezes.
-    */
+        &&
 
-    if (
-        concursosCiclo.includes(
-            numero
+        new Set(
+            numeros
+        ).size === 6
+
+        &&
+
+        numeros.every(
+            numero =>
+                Number.isInteger(
+                    numero
+                )
+                &&
+                numero >= 1
+                &&
+                numero <= 60
         )
-    ) {
 
-        atualizarRestantes();
-
-        return;
-
-    }
-
-
-    /*
-    Não ultrapassa os
-    12 concursos do ciclo.
-    */
-
-    if (
-        concursosCiclo.length >=
-        TOTAL_CICLO
-    ) {
-
-        return;
-
-    }
-
-
-    concursosCiclo.push(
-        numero
     );
-
-
-    concursosCiclo.sort(
-        (a,b) => a-b
-    );
-
-
-    localStorage.setItem(
-        "mega_ciclo_v2",
-        JSON.stringify(
-            concursosCiclo
-        )
-    );
-
-
-    atualizarRestantes();
 
 }
 
 
-function atualizarRestantes() {
+/* =========================================================
+   INFORMAÇÕES DO CICLO
+========================================================= */
 
-    const utilizados =
-        concursosCiclo.length;
+function atualizarInformacoesCiclo() {
+
+    if (!dadosCiclo) {
+        return;
+    }
 
 
-    const restantes =
-        Math.max(
-            0,
-            TOTAL_CICLO -
-            utilizados
+    const total =
+        Number(
+            dadosCiclo.totalConcursos
+        ) || 12;
+
+
+    const processados =
+        Array.isArray(
+            dadosCiclo.concursosProcessados
+        )
+        ?
+        dadosCiclo.concursosProcessados.length
+        :
+        0;
+
+
+    let restantes =
+        Number(
+            dadosCiclo.restantes
         );
+
+
+    if (
+        !Number.isFinite(
+            restantes
+        )
+    ) {
+
+        restantes =
+            Math.max(
+                0,
+                total - processados
+            );
+
+    }
 
 
     document.getElementById(
@@ -764,35 +1026,259 @@ function atualizarRestantes() {
 
 
     if (
-        utilizados === 0
+        dadosCiclo.status ===
+        "concluido"
     ) {
 
         info.innerText =
-            "Novo ciclo • 12 concursos restantes";
+            `${total}/${total} concursos registrados • ciclo concluído`;
+
+        return;
 
     }
 
-    else if (
-        restantes > 0
+
+    if (
+        processados === 0
     ) {
 
+        const inicio =
+            dadosCiclo
+            .concursoInicialPlanejado;
+
         info.innerText =
-            `${utilizados}/12 concursos registrados`;
+            inicio
+            ?
+            `Novo ciclo • inicia no concurso ${inicio} • ${restantes} restantes`
+            :
+            `Novo ciclo • ${restantes} concursos restantes`;
+
+        return;
 
     }
 
-    else {
 
-        info.innerText =
-            "12/12 concursos registrados • ciclo concluído";
-
-    }
+    info.innerText =
+        `${processados}/${total} concursos registrados`;
 
 }
 
 
 /* =========================================================
-   GERENCIADOR DE JOGOS
+   VERIFICAR SE CONCURSO JÁ FOI PROCESSADO
+========================================================= */
+
+function concursoJaProcessado(
+    concurso
+) {
+
+    if (
+        !dadosCiclo
+        ||
+        !Array.isArray(
+            dadosCiclo.concursosProcessados
+        )
+    ) {
+
+        return false;
+
+    }
+
+
+    return dadosCiclo
+        .concursosProcessados
+        .map(Number)
+        .includes(
+            Number(
+                concurso
+            )
+        );
+
+}
+
+
+/* =========================================================
+   BUSCAR REGISTRO NO HISTÓRICO
+========================================================= */
+
+function buscarRegistroHistorico(
+    concurso
+) {
+
+    if (
+        !dadosCiclo
+        ||
+        !Array.isArray(
+            dadosCiclo.historico
+        )
+    ) {
+
+        return null;
+
+    }
+
+
+    return dadosCiclo
+        .historico
+        .find(
+            item =>
+                Number(
+                    item.concurso
+                )
+                ===
+                Number(
+                    concurso
+                )
+        )
+        || null;
+
+}
+
+
+/* =========================================================
+   PREENCHER RESULTADO
+========================================================= */
+
+function preencherResultado(
+    resultado
+) {
+
+    document.getElementById(
+        "concurso"
+    ).value =
+        resultado.numero;
+
+
+    document.getElementById(
+        "data-sorteio"
+    ).value =
+        resultado.data || "---";
+
+
+    const acumulou =
+        document.getElementById(
+            "acumulou"
+        );
+
+
+    acumulou.value =
+        resultado.acumulado
+        ?
+        "SIM! 🚀"
+        :
+        "NÃO 🎯";
+
+
+    acumulou.style.color =
+        resultado.acumulado
+        ?
+        "#34D399"
+        :
+        "#60A5FA";
+
+
+    resultado.dezenas.forEach(
+        (numero,index) => {
+
+            document.getElementById(
+                "s" + (index + 1)
+            ).value =
+                numero;
+
+        }
+    );
+
+
+    document.getElementById(
+        "premio"
+    ).value =
+        resultado.premio
+        ?
+        formatarValor(
+            resultado.premio
+        )
+        :
+        "---";
+
+
+    document.getElementById(
+        "proximo-premio"
+    ).value =
+        resultado.proximo
+        ?
+        formatarValor(
+            resultado.proximo
+        )
+        :
+        "---";
+
+}
+
+
+/* =========================================================
+   FORMATAR VALOR
+========================================================= */
+
+function formatarValor(
+    valor
+) {
+
+    const numero =
+        Number(
+            valor
+        );
+
+
+    if (
+        !Number.isFinite(
+            numero
+        )
+    ) {
+
+        return "---";
+
+    }
+
+
+    return numero.toLocaleString(
+        "pt-BR",
+        {
+            minimumFractionDigits:2,
+            maximumFractionDigits:2
+        }
+    );
+
+}
+
+
+/* =========================================================
+   NÚMEROS SORTEADOS
+========================================================= */
+
+function getSorteados() {
+
+    return [
+        1,2,3,4,5,6
+    ]
+
+    .map(
+        i =>
+            parseInt(
+                document.getElementById(
+                    "s" + i
+                ).value
+            )
+    )
+
+    .filter(
+        Number.isFinite
+    );
+
+}
+
+
+/* =========================================================
+   VISUALIZAR JOGOS DO CICLO
 ========================================================= */
 
 function abrirGerenciador() {
@@ -833,6 +1319,18 @@ function montarGerenciador() {
         );
 
 
+    if (
+        !meusJogos.length
+    ) {
+
+        box.innerHTML =
+            "Nenhum jogo carregado.";
+
+        return;
+
+    }
+
+
     let html = `
 
         <div style="
@@ -841,7 +1339,7 @@ function montarGerenciador() {
         margin-bottom:5px;
         ">
 
-        Jogos cadastrados
+        Jogos oficiais do ciclo
 
         </div>
 
@@ -852,7 +1350,7 @@ function montarGerenciador() {
         margin-bottom:8px;
         ">
 
-        Digite exatamente 6 números entre 1 e 60.
+        Estes números são carregados diretamente do ciclo.json.
 
         </div>
 
@@ -860,52 +1358,42 @@ function montarGerenciador() {
 
 
     meusJogos.forEach(
-        (jogo,i) => {
+        jogo => {
+
+            const numeros =
+                jogo.numeros
+                .map(
+                    numero =>
+                        String(
+                            numero
+                        ).padStart(
+                            2,
+                            "0"
+                        )
+                )
+                .join(" ");
+
 
             html += `
 
-            <div class="jogo-edit">
+                <div class="jogo-edit">
 
-            <div style="
-            color:#60A5FA;
-            font-weight:700;
-            ">
+                    <div style="
+                    color:#60A5FA;
+                    font-weight:700;
+                    ">
 
-            👤 ${jogo.dono}
+                    👤 ${jogo.dono}
 
-            </div>
+                    </div>
 
+                    <div class="jogo-numeros">
 
-            <input
-            id="edit-${i}"
-            value="${
-                jogo.numeros
-                .map(
-                    n =>
-                    String(n)
-                    .padStart(
-                        2,
-                        "0"
-                    )
-                )
-                .join(" ")
-            }"
-            >
+                    ${numeros}
 
+                    </div>
 
-            <button
-            class="btn-check"
-            style="
-            padding:9px;
-            margin-top:7px;
-            "
-            onclick="salvarJogo(${i})">
-
-            Salvar
-
-            </button>
-
-            </div>
+                </div>
 
             `;
 
@@ -919,515 +1407,11 @@ function montarGerenciador() {
 }
 
 
-function salvarJogo(index) {
-
-    const texto =
-        document.getElementById(
-            "edit-" +
-            index
-        ).value;
-
-
-    const numeros =
-        texto
-        .split(/[,\s;]+/)
-        .filter(Boolean)
-        .map(Number);
-
-
-    if (
-        !validarDezenas(
-            numeros
-        )
-    ) {
-
-        alert(
-            "Informe exatamente 6 números únicos entre 1 e 60."
-        );
-
-        return;
-
-    }
-
-
-    numeros.sort(
-        (a,b) =>
-        a-b
-    );
-
-
-    meusJogos[index].numeros =
-        numeros;
-
-
-    localStorage.setItem(
-        "mega_jogos_v2",
-        JSON.stringify(
-            meusJogos
-        )
-    );
-
-
-    montarGerenciador();
-
-
-    alert(
-        `Jogo de ${meusJogos[index].dono} salvo!`
-    );
-
-}
-
-
 /* =========================================================
-   VALIDAÇÃO
-========================================================= */
-
-function validarDezenas(
-    numeros
-) {
-
-    return (
-
-        numeros.length === 6 &&
-
-        new Set(
-            numeros
-        ).size === 6 &&
-
-        numeros.every(
-            n =>
-            Number.isInteger(n) &&
-            n >= 1 &&
-            n <= 60
-        )
-
-    );
-
-}
-
-
-function getSorteados() {
-
-    return [
-        1,2,3,4,5,6
-    ]
-
-    .map(
-        i =>
-        parseInt(
-            document.getElementById(
-                "s" + i
-            ).value
-        )
-    )
-
-    .filter(
-        Number.isFinite
-    );
-
-}
-
-
-/* =========================================================
-   FORMATAÇÃO
-========================================================= */
-
-function formatarValor(
-    valor
-) {
-
-    const numero =
-        Number(
-            valor
-        );
-
-
-    if (
-        !Number.isFinite(
-            numero
-        )
-    ) {
-
-        return "---";
-
-    }
-
-
-    return numero.toLocaleString(
-        "pt-BR",
-        {
-
-            minimumFractionDigits:2,
-
-            maximumFractionDigits:2
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   BUSCA AUTOMÁTICA
-========================================================= */
-
-async function buscarResultado() {
-
-    const status =
-        document.getElementById(
-            "status"
-        );
-
-
-    const botao =
-        document.getElementById(
-            "btn-buscar"
-        );
-
-
-    status.innerText =
-        "Buscando resultado atualizado...";
-
-
-    status.style.color =
-        "#F59E0B";
-
-
-    botao.disabled =
-        true;
-
-
-    try {
-
-
-        /*
-        Busca exclusivamente o arquivo
-        gerado pelo GitHub Actions.
-
-        O parâmetro ?t evita cache antigo.
-        */
-
-        const response =
-            await fetch(
-
-                "./resultado.json?t=" +
-                Date.now(),
-
-                {
-                    cache:
-                    "no-store"
-                }
-
-            );
-
-
-        if (
-            !response.ok
-        ) {
-
-            throw new Error(
-                "HTTP " +
-                response.status
-            );
-
-        }
-
-
-        const data =
-            await response.json();
-
-
-        /* ===========================
-           CONCURSO
-        =========================== */
-
-        const concurso =
-            Number(
-                data.concurso
-            );
-
-
-        if (
-            !Number.isInteger(
-                concurso
-            ) ||
-            concurso <= 0
-        ) {
-
-            throw new Error(
-                "Concurso inválido."
-            );
-
-        }
-
-
-        /* ===========================
-           DATA
-        =========================== */
-
-        const dataSorteio =
-            String(
-                data.data || ""
-            ).trim();
-
-
-        if (
-            !dataSorteio
-        ) {
-
-            throw new Error(
-                "Data do sorteio não encontrada."
-            );
-
-        }
-
-
-        /* ===========================
-           DEZENAS
-        =========================== */
-
-        const dezenas =
-            Array.isArray(
-                data.dezenas
-            )
-
-            ?
-
-            data.dezenas.map(
-                Number
-            )
-
-            :
-
-            [];
-
-
-        if (
-            !validarDezenas(
-                dezenas
-            )
-        ) {
-
-            throw new Error(
-                "Resultado possui dezenas inválidas."
-            );
-
-        }
-
-
-        /* ===========================
-           ACUMULOU
-        =========================== */
-
-        const acumulado =
-            data.acumulou === true ||
-            String(
-                data.acumulou
-            ).toLowerCase() ===
-            "true";
-
-
-        /* ===========================
-           PRÊMIOS
-        =========================== */
-
-        const premioSorteado =
-            Number(
-                data.premioSorteado
-            );
-
-
-        const proximoPremio =
-            Number(
-                data.proximoPremio
-            );
-
-
-        /* ===========================
-           OBJETO INTERNO
-        =========================== */
-
-        const resultado = {
-
-            numero:
-                concurso,
-
-            data:
-                dataSorteio,
-
-            dezenas:
-                dezenas,
-
-            acumulado:
-                acumulado,
-
-            premio:
-                Number.isFinite(
-                    premioSorteado
-                )
-                ?
-                premioSorteado
-                :
-                0,
-
-            proximo:
-                Number.isFinite(
-                    proximoPremio
-                )
-                ?
-                proximoPremio
-                :
-                0
-
-        };
-
-
-        preencherResultado(
-            resultado
-        );
-
-
-        status.innerText =
-            `Sorteio ${concurso} atualizado com sucesso!`;
-
-
-        status.style.color =
-            "#2ebd59";
-
-
-    }
-
-    catch(error) {
-
-
-        console.error(
-            "Erro na busca automática:",
-            error
-        );
-
-
-        status.innerText =
-            "Não foi possível carregar o resultado.";
-
-
-        status.style.color =
-            "#EF4444";
-
-
-    }
-
-    finally {
-
-
-        botao.disabled =
-            false;
-
-
-    }
-
-}
-
-
-/* =========================================================
-   PREENCHER RESULTADO
-========================================================= */
-
-function preencherResultado(
-    resultado
-) {
-
-
-    document.getElementById(
-        "concurso"
-    ).value =
-        resultado.numero;
-
-
-    document.getElementById(
-        "data-sorteio"
-    ).value =
-        resultado.data || "---";
-
-
-    const acumulou =
-        document.getElementById(
-            "acumulou"
-        );
-
-
-    acumulou.value =
-        resultado.acumulado
-        ?
-        "SIM! 🚀"
-        :
-        "NÃO 🎯";
-
-
-    acumulou.style.color =
-        resultado.acumulado
-        ?
-        "#34D399"
-        :
-        "#60A5FA";
-
-
-    resultado.dezenas.forEach(
-        (numero,index) => {
-
-
-            document.getElementById(
-                "s" +
-                (index + 1)
-            ).value =
-                numero;
-
-
-        }
-    );
-
-
-    document.getElementById(
-        "premio"
-    ).value =
-
-        resultado.premio
-
-        ?
-
-        formatarValor(
-            resultado.premio
-        )
-
-        :
-
-        "---";
-
-
-    document.getElementById(
-        "proximo-premio"
-    ).value =
-
-        resultado.proximo
-
-        ?
-
-        formatarValor(
-            resultado.proximo
-        )
-
-        :
-
-        "---";
-
-}
-
-
-/* =========================================================
-   CONFERÊNCIA
+   CONFERIR JOGOS
 ========================================================= */
 
 function conferir() {
-
 
     const sorteados =
         getSorteados();
@@ -1439,11 +1423,22 @@ function conferir() {
         )
     ) {
 
-
         alert(
-            "Carregue um resultado válido primeiro."
+            "Não há um resultado válido carregado."
         );
 
+        return;
+
+    }
+
+
+    if (
+        !meusJogos.length
+    ) {
+
+        alert(
+            "Os jogos do ciclo ainda não foram carregados."
+        );
 
         return;
 
@@ -1451,22 +1446,30 @@ function conferir() {
 
 
     const concurso =
-        document.getElementById(
-            "concurso"
-        ).value;
-
-
-    if (
-        concurso
-    ) {
-
-
-        registrarConcurso(
-            concurso
+        Number(
+            document.getElementById(
+                "concurso"
+            ).value
         );
 
 
-    }
+    /*
+    Se o concurso já foi processado pelo GitHub,
+    procuramos o registro oficial do histórico.
+
+    Caso ainda não tenha sido processado,
+    fazemos apenas uma conferência visual.
+
+    IMPORTANTE:
+    esta função NÃO altera ciclo.json,
+    NÃO reduz restantes
+    e NÃO grava localStorage.
+    */
+
+    const registroOficial =
+        buscarRegistroHistorico(
+            concurso
+        );
 
 
     const lista =
@@ -1478,10 +1481,8 @@ function conferir() {
     lista.style.display =
         "grid";
 
-
     lista.style.gridTemplateColumns =
         "1fr 1fr";
-
 
     lista.style.gap =
         "10px";
@@ -1490,7 +1491,6 @@ function conferir() {
     let html =
         "";
 
-
     let maxAcertos =
         0;
 
@@ -1498,9 +1498,77 @@ function conferir() {
     meusJogos.forEach(
         jogoObj => {
 
+            let acertos = 0;
 
-            let acertos =
-                0;
+            let dezenasAcertadas = [];
+
+
+            /*
+            Preferimos o resultado registrado
+            pelo workflow quando existir.
+            */
+
+            if (
+                registroOficial
+                &&
+                Array.isArray(
+                    registroOficial.resultados
+                )
+            ) {
+
+                const oficial =
+                    registroOficial
+                    .resultados
+                    .find(
+                        item =>
+                            item.dono
+                            ===
+                            jogoObj.dono
+                    );
+
+
+                if (oficial) {
+
+                    acertos =
+                        Number(
+                            oficial.acertos
+                        ) || 0;
+
+                    dezenasAcertadas =
+                        Array.isArray(
+                            oficial.dezenasAcertadas
+                        )
+                        ?
+                        oficial
+                        .dezenasAcertadas
+                        .map(Number)
+                        :
+                        [];
+
+                }
+
+            }
+
+
+            /*
+            Se ainda não houver histórico oficial,
+            calculamos localmente apenas para exibição.
+            */
+
+            if (!registroOficial) {
+
+                dezenasAcertadas =
+                    jogoObj.numeros.filter(
+                        numero =>
+                            sorteados.includes(
+                                numero
+                            )
+                    );
+
+                acertos =
+                    dezenasAcertadas.length;
+
+            }
 
 
             const jogoHtml =
@@ -1508,7 +1576,6 @@ function conferir() {
 
                 .map(
                     numero => {
-
 
                         const formatado =
                             numero
@@ -1520,14 +1587,10 @@ function conferir() {
 
 
                         if (
-                            sorteados.includes(
+                            dezenasAcertadas.includes(
                                 numero
                             )
                         ) {
-
-
-                            acertos++;
-
 
                             return `
 
@@ -1547,7 +1610,6 @@ function conferir() {
                             </span>
 
                             `;
-
 
                         }
 
@@ -1569,7 +1631,6 @@ function conferir() {
                         </span>
 
                         `;
-
 
                     }
                 )
@@ -1664,7 +1725,6 @@ function conferir() {
 
             </span>
 
-
             </div>
 
 
@@ -1704,11 +1764,9 @@ function conferir() {
                 ""
             }
 
-
             </div>
 
             `;
-
 
         }
     );
@@ -1746,49 +1804,37 @@ function conferir() {
         maxAcertos >= 4
     ) {
 
-
         if (
             maxAcertos === 6
         ) {
 
-
             alerta.innerHTML =
                 "👑 ACERTAMOS AS SEIS DEZENAS! 🤑 👑";
-
 
             alerta.style.background =
                 "linear-gradient(135deg,#D97706,#92400E)";
 
-
         }
-
 
         else if (
             maxAcertos === 5
         ) {
 
-
             alerta.innerHTML =
                 "🔥 ACERTAMOS A QUINA! 🤑 🔥";
-
 
             alerta.style.background =
                 "linear-gradient(135deg,#064E3B,#047857)";
 
-
         }
 
-
         else {
-
 
             alerta.innerHTML =
                 "🏅 ACERTAMOS A QUADRA! 🤑 🏅";
 
-
             alerta.style.background =
                 "linear-gradient(135deg,#064E3B,#047857)";
-
 
         }
 
@@ -1796,16 +1842,12 @@ function conferir() {
         alerta.style.display =
             "block";
 
-
     }
-
 
     else {
 
-
         alerta.style.display =
             "none";
-
 
     }
 
@@ -1813,11 +1855,10 @@ function conferir() {
 
 
 /* =========================================================
-   WHATSAPP TEXTO
+   COPIAR PARA WHATSAPP
 ========================================================= */
 
 function copiarWhatsApp() {
-
 
     const sorteados =
         getSorteados();
@@ -1829,11 +1870,9 @@ function copiarWhatsApp() {
         )
     ) {
 
-
         alert(
             "Não há resultado completo para copiar!"
         );
-
 
         return;
 
@@ -1894,13 +1933,12 @@ function copiarWhatsApp() {
     meusJogos.forEach(
         jogo => {
 
-
             const acertos =
                 jogo.numeros.filter(
-                    n =>
-                    sorteados.includes(
-                        n
-                    )
+                    numero =>
+                        sorteados.includes(
+                            numero
+                        )
                 ).length;
 
 
@@ -1908,26 +1946,23 @@ function copiarWhatsApp() {
                 jogo.numeros
 
                 .map(
-                    n => {
+                    numero => {
 
-
-                        const f =
-                            n
+                        const formatado =
+                            numero
                             .toString()
                             .padStart(
                                 2,
                                 "0"
                             );
 
-
                         return sorteados.includes(
-                            n
+                            numero
                         )
                         ?
-                        `*${f}*`
+                        `*${formatado}*`
                         :
-                        f;
-
+                        formatado;
 
                     }
                 )
@@ -1936,7 +1971,6 @@ function copiarWhatsApp() {
 
 
             texto +=
-
 `👤 *${jogo.dono}*
 🎲 ${numeros}`;
 
@@ -1945,11 +1979,8 @@ function copiarWhatsApp() {
                 acertos > 0
             ) {
 
-
                 texto +=
-
 `  -> *${acertos} ${acertos === 1 ? "acerto" : "acertos"}*`;
-
 
             }
 
@@ -1957,48 +1988,40 @@ function copiarWhatsApp() {
             texto +=
                 "\n\n";
 
-
         }
     );
 
 
     texto +=
-
 `--------------------------
 ⏳ *Sorteios restantes:* ${restantes}`;
 
 
     navigator.clipboard
-
         .writeText(
             texto
         )
-
         .then(
             () =>
-
-            alert(
-                "Resumo copiado para o WhatsApp!"
-            )
+                alert(
+                    "Resumo copiado para o WhatsApp!"
+                )
         )
-
         .catch(
             () =>
-
-            alert(
-                "Erro ao copiar."
-            )
+                alert(
+                    "Erro ao copiar."
+                )
         );
 
 }
 
 
 /* =========================================================
-   IMAGEM
+   GERAR IMAGEM
 ========================================================= */
 
 async function gerarFotoResultado() {
-
 
     const card =
         document.querySelector(
@@ -2023,28 +2046,22 @@ async function gerarFotoResultado() {
 
     await new Promise(
         resolve =>
-        setTimeout(
-            resolve,
-            150
-        )
+            setTimeout(
+                resolve,
+                150
+            )
     );
 
 
     try {
 
-
         const canvas =
             await html2canvas(
                 card,
                 {
-
                     scale:2,
-
-                    backgroundColor:
-                        "#0F1115",
-
+                    backgroundColor:"#0F1115",
                     useCORS:true
-
                 }
             );
 
@@ -2073,12 +2090,9 @@ async function gerarFotoResultado() {
 
         link.click();
 
-
     }
 
-
     catch(error) {
-
 
         console.error(
             error
@@ -2089,12 +2103,9 @@ async function gerarFotoResultado() {
             "Não foi possível gerar a imagem."
         );
 
-
     }
 
-
     finally {
-
 
         card.classList.remove(
             "capturando"
@@ -2103,7 +2114,6 @@ async function gerarFotoResultado() {
 
         botao.innerText =
             "Salvar Imagem do Resultado 📸";
-
 
     }
 
