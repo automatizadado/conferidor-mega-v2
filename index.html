@@ -109,6 +109,11 @@ button {
     gap: 8px;
 }
 
+button:disabled {
+    opacity: .65;
+    cursor: wait;
+}
+
 .btn-api {
     background: linear-gradient(135deg,#0088ff,#0055ff);
     color: white;
@@ -273,17 +278,16 @@ button {
 <h2>🍀 💰 Conferidor Mega-Sena 💰 🍀</h2>
 
 <div id="status">
-Digite o concurso ou deixe vazio para buscar o último
+Clique em Buscar Automático para carregar o último resultado
 </div>
 
-<!-- NÃO APARECE NO PRINT -->
 <div class="ciclo-info" id="ciclo-info"></div>
 
 <div class="input-group-row">
 
 <div style="flex:1.2">
 <label>Concurso</label>
-<input type="number" id="concurso" placeholder="Ex: 3050">
+<input type="number" id="concurso" placeholder="Ex: 3061">
 </div>
 
 <div style="flex:.9">
@@ -293,13 +297,19 @@ Digite o concurso ou deixe vazio para buscar o último
 
 <div style="flex:1.1">
 <label>Acumulou?</label>
-<input type="text" id="acumulou" readonly
+<input
+type="text"
+id="acumulou"
+readonly
 style="font-weight:bold;text-align:center">
 </div>
 
 </div>
 
-<button class="btn-api" onclick="buscarResultado()">
+<button
+class="btn-api"
+id="btn-buscar"
+onclick="buscarResultado()">
 🔄 1. Buscar Automático
 </button>
 
@@ -352,14 +362,12 @@ style="color:#F59E0B;font-weight:bold">
 <label>Números Sorteados</label>
 
 <div class="sorteados-container">
-
 <input type="number" id="s1" min="1" max="60">
 <input type="number" id="s2" min="1" max="60">
 <input type="number" id="s3" min="1" max="60">
 <input type="number" id="s4" min="1" max="60">
 <input type="number" id="s5" min="1" max="60">
 <input type="number" id="s6" min="1" max="60">
-
 </div>
 
 <button
@@ -429,31 +437,35 @@ let concursosCiclo = [];
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
-
     carregarJogos();
     carregarCiclo();
-
     atualizarRestantes();
     montarGerenciador();
-
 });
 
 
 function carregarJogos() {
 
-    const salvo = localStorage.getItem("mega_jogos_v2");
+    const salvo =
+        localStorage.getItem("mega_jogos_v2");
 
     if (salvo) {
 
         try {
             meusJogos = JSON.parse(salvo);
         } catch {
-            meusJogos = JSON.parse(JSON.stringify(jogosOriginais));
+            meusJogos =
+                JSON.parse(
+                    JSON.stringify(jogosOriginais)
+                );
         }
 
     } else {
 
-        meusJogos = JSON.parse(JSON.stringify(jogosOriginais));
+        meusJogos =
+            JSON.parse(
+                JSON.stringify(jogosOriginais)
+            );
 
     }
 
@@ -503,7 +515,9 @@ function registrarConcurso(numero) {
 
     concursosCiclo.push(numero);
 
-    concursosCiclo.sort((a,b) => a-b);
+    concursosCiclo.sort(
+        (a,b) => a-b
+    );
 
     localStorage.setItem(
         "mega_ciclo_v2",
@@ -517,16 +531,23 @@ function registrarConcurso(numero) {
 
 function atualizarRestantes() {
 
-    const utilizados = concursosCiclo.length;
+    const utilizados =
+        concursosCiclo.length;
 
     const restantes =
-        Math.max(0, TOTAL_CICLO - utilizados);
+        Math.max(
+            0,
+            TOTAL_CICLO - utilizados
+        );
 
-    document.getElementById("restantes").value =
-        restantes;
+    document.getElementById(
+        "restantes"
+    ).value = restantes;
 
     const info =
-        document.getElementById("ciclo-info");
+        document.getElementById(
+            "ciclo-info"
+        );
 
     if (utilizados === 0) {
 
@@ -555,7 +576,9 @@ function atualizarRestantes() {
 function abrirGerenciador() {
 
     const box =
-        document.getElementById("gerenciar");
+        document.getElementById(
+            "gerenciar"
+        );
 
     if (box.style.display === "block") {
 
@@ -564,7 +587,6 @@ function abrirGerenciador() {
     } else {
 
         montarGerenciador();
-
         box.style.display = "block";
 
     }
@@ -575,7 +597,9 @@ function abrirGerenciador() {
 function montarGerenciador() {
 
     const box =
-        document.getElementById("gerenciar");
+        document.getElementById(
+            "gerenciar"
+        );
 
     let html = `
         <div style="
@@ -595,41 +619,48 @@ function montarGerenciador() {
         </div>
     `;
 
-    meusJogos.forEach((jogo,i) => {
+    meusJogos.forEach(
+        (jogo,i) => {
 
-        html += `
+            html += `
 
-        <div class="jogo-edit">
+            <div class="jogo-edit">
 
-        <div style="
-        color:#60A5FA;
-        font-weight:700;
-        ">
-        👤 ${jogo.dono}
-        </div>
+            <div style="
+            color:#60A5FA;
+            font-weight:700;
+            ">
+            👤 ${jogo.dono}
+            </div>
 
-        <input
-        id="edit-${i}"
-        value="${jogo.numeros
-        .map(n => String(n).padStart(2,"0"))
-        .join(" ")}"
-        >
+            <input
+            id="edit-${i}"
+            value="${
+                jogo.numeros
+                .map(
+                    n =>
+                    String(n).padStart(2,"0")
+                )
+                .join(" ")
+            }"
+            >
 
-        <button
-        class="btn-check"
-        style="
-        padding:9px;
-        margin-top:7px;
-        "
-        onclick="salvarJogo(${i})">
-        Salvar
-        </button>
+            <button
+            class="btn-check"
+            style="
+            padding:9px;
+            margin-top:7px;
+            "
+            onclick="salvarJogo(${i})">
+            Salvar
+            </button>
 
-        </div>
+            </div>
 
-        `;
+            `;
 
-    });
+        }
+    );
 
     box.innerHTML = html;
 
@@ -659,7 +690,9 @@ function salvarJogo(index) {
 
     }
 
-    numeros.sort((a,b) => a-b);
+    numeros.sort(
+        (a,b) => a-b
+    );
 
     meusJogos[index].numeros =
         numeros;
@@ -715,36 +748,224 @@ function getSorteados() {
 
 
 /* =========================================================
-   FETCH COM TIMEOUT
+   FORMATAÇÃO DE VALORES
 ========================================================= */
 
-async function fetchComTimeout(
-    url,
-    tempo = 6500
-) {
+function formatarValor(valor) {
 
-    const controller =
-        new AbortController();
+    const numero =
+        Number(valor);
 
-    const timer =
-        setTimeout(
-            () => controller.abort(),
-            tempo
+    if (!Number.isFinite(numero)) {
+        return "---";
+    }
+
+    return numero.toLocaleString(
+        "pt-BR",
+        {
+            minimumFractionDigits:2,
+            maximumFractionDigits:2
+        }
+    );
+
+}
+
+
+/* =========================================================
+   BUSCA AUTOMÁTICA
+   LÊ O resultado.json GERADO PELO GITHUB ACTIONS
+========================================================= */
+
+async function buscarResultado() {
+
+    const status =
+        document.getElementById(
+            "status"
         );
+
+    const botao =
+        document.getElementById(
+            "btn-buscar"
+        );
+
+    status.innerText =
+        "Buscando resultado atualizado...";
+
+    status.style.color =
+        "#F59E0B";
+
+    botao.disabled = true;
 
     try {
 
-        return await fetch(
-            url,
-            {
-                signal:controller.signal,
-                cache:"no-store"
-            }
+        /*
+        O ?t= impede que o navegador utilize
+        uma cópia antiga do resultado.json.
+        */
+
+        const response =
+            await fetch(
+                "./resultado.json?t=" +
+                Date.now(),
+                {
+                    cache:"no-store"
+                }
+            );
+
+        if (!response.ok) {
+
+            throw new Error(
+                "HTTP " +
+                response.status
+            );
+
+        }
+
+        const data =
+            await response.json();
+
+
+        /* -------------------------
+           CONCURSO
+        ------------------------- */
+
+        const concurso =
+            Number(
+                data.concurso
+            );
+
+        if (
+            !Number.isInteger(concurso) ||
+            concurso <= 0
+        ) {
+
+            throw new Error(
+                "Concurso inválido."
+            );
+
+        }
+
+
+        /* -------------------------
+           DEZENAS
+        ------------------------- */
+
+        const dezenas =
+            Array.isArray(data.dezenas)
+            ? data.dezenas.map(Number)
+            : [];
+
+        if (
+            !validarDezenas(
+                dezenas
+            )
+        ) {
+
+            throw new Error(
+                "As seis dezenas são inválidas."
+            );
+
+        }
+
+
+        /* -------------------------
+           ACUMULOU
+        ------------------------- */
+
+        let acumulado = false;
+
+        if (data.acumulou === true) {
+            acumulado = true;
+        }
+
+        if (
+            String(data.acumulou)
+            .toLowerCase() === "true"
+        ) {
+            acumulado = true;
+        }
+
+
+        /* -------------------------
+           PRÊMIOS
+        ------------------------- */
+
+        const premioSorteado =
+            Number(
+                data.premioSorteado
+            );
+
+        const proximoPremio =
+            Number(
+                data.proximoPremio
+            );
+
+
+        /* -------------------------
+           NORMALIZA PARA O FORMATO
+           QUE O SITE JÁ UTILIZA
+        ------------------------- */
+
+        const resultado = {
+
+            numero:
+                concurso,
+
+            dezenas:
+                dezenas,
+
+            acumulado:
+                acumulado,
+
+            premio:
+                Number.isFinite(
+                    premioSorteado
+                )
+                ? premioSorteado
+                : 0,
+
+            proximo:
+                Number.isFinite(
+                    proximoPremio
+                )
+                ? proximoPremio
+                : 0
+
+        };
+
+
+        /* -------------------------
+           PREENCHE A TELA
+        ------------------------- */
+
+        preencherResultado(
+            resultado
         );
+
+
+        status.innerText =
+            `Sorteio ${concurso} atualizado com sucesso!`;
+
+        status.style.color =
+            "#2ebd59";
+
+
+    } catch(error) {
+
+        console.error(
+            "Erro na busca automática:",
+            error
+        );
+
+        status.innerText =
+            "Busca automática indisponível. Use a importação.";
+
+        status.style.color =
+            "#EF4444";
 
     } finally {
 
-        clearTimeout(timer);
+        botao.disabled = false;
 
     }
 
@@ -752,7 +973,7 @@ async function fetchComTimeout(
 
 
 /* =========================================================
-   NORMALIZADOR DE RESULTADOS
+   NORMALIZADOR PARA IMPORTAÇÃO MANUAL
 ========================================================= */
 
 function normalizarResultado(data) {
@@ -791,12 +1012,18 @@ function normalizarResultado(data) {
     const proximo =
         Number(
             data.valorEstimadoProximoConcurso ??
+            data.proximoPremio ??
             0
         );
 
-    let premio = 0;
+    let premio =
+        Number(
+            data.premioSorteado ??
+            0
+        );
 
     if (
+        !premio &&
         data.listaRateioPremio &&
         data.listaRateioPremio[0]
     ) {
@@ -810,6 +1037,7 @@ function normalizarResultado(data) {
     }
 
     if (
+        !premio &&
         data.premiacoes &&
         data.premiacoes[0]
     ) {
@@ -829,91 +1057,6 @@ function normalizarResultado(data) {
         premio,
         proximo
     };
-
-}
-
-
-/* =========================================================
-   BUSCA AUTOMÁTICA
-========================================================= */
-
-async function buscarResultado() {
-
-    const concurso =
-        document
-        .getElementById("concurso")
-        .value
-        .trim();
-
-    const status =
-        document.getElementById("status");
-
-    status.innerText =
-        concurso
-        ? `Buscando concurso ${concurso}...`
-        : "Buscando último resultado...";
-
-    status.style.color =
-        "#F59E0B";
-
-    const endpoints = [
-
-        `https://loteriascaixa-api.onrender.com/api/megasena/${concurso || "latest"}`,
-
-        `https://api.guidi.dev.br/loteria/megasena/${concurso || "ultimo"}`,
-
-        `https://api.allorigins.win/raw?url=${
-            encodeURIComponent(
-                "https://servicebus2.caixa.gov.br/portaldeloterias/api/megasena/" +
-                concurso
-            )
-        }`
-
-    ];
-
-    for (const url of endpoints) {
-
-        try {
-
-            const response =
-                await fetchComTimeout(url);
-
-            if (!response.ok) {
-                continue;
-            }
-
-            const data =
-                await response.json();
-
-            const resultado =
-                normalizarResultado(data);
-
-            preencherResultado(resultado);
-
-            status.innerText =
-                `Sorteio ${resultado.numero} atualizado com sucesso!`;
-
-            status.style.color =
-                "#2ebd59";
-
-            return;
-
-        } catch(error) {
-
-            console.warn(
-                "Fonte indisponível",
-                error
-            );
-
-        }
-
-    }
-
-    status.innerText =
-        "Busca automática indisponível. Use a importação.";
-
-    status.style.color =
-        "#EF4444";
 
 }
 
@@ -943,7 +1086,9 @@ function extrairJSON(texto) {
         .replace(/&amp;/g,"&")
         .trim();
 
-    return JSON.parse(conteudo);
+    return JSON.parse(
+        conteudo
+    );
 
 }
 
@@ -975,7 +1120,9 @@ async function importarArquivos(event) {
             const resultado =
                 normalizarResultado(json);
 
-            resultados.push(resultado);
+            resultados.push(
+                resultado
+            );
 
         } catch(error) {
 
@@ -1051,6 +1198,7 @@ function preencherResultado(resultado) {
     ).value =
         resultado.numero;
 
+
     const acumulou =
         document.getElementById(
             "acumulou"
@@ -1066,6 +1214,7 @@ function preencherResultado(resultado) {
         ? "#34D399"
         : "#60A5FA";
 
+
     resultado.dezenas.forEach(
         (numero,index) => {
 
@@ -1077,30 +1226,24 @@ function preencherResultado(resultado) {
         }
     );
 
+
     document.getElementById(
         "premio"
     ).value =
         resultado.premio
-        ? resultado.premio
-            .toLocaleString(
-                "pt-BR",
-                {
-                    minimumFractionDigits:2
-                }
-            )
+        ? formatarValor(
+            resultado.premio
+        )
         : "--- (Edite o valor)";
+
 
     document.getElementById(
         "proximo-premio"
     ).value =
         resultado.proximo
-        ? resultado.proximo
-            .toLocaleString(
-                "pt-BR",
-                {
-                    minimumFractionDigits:2
-                }
-            )
+        ? formatarValor(
+            resultado.proximo
+        )
         : "---";
 
 }
@@ -1135,9 +1278,11 @@ function conferir() {
         ).value;
 
     if (concurso) {
+
         registrarConcurso(
             concurso
         );
+
     }
 
     const lista =
@@ -1157,6 +1302,7 @@ function conferir() {
     let html = "";
     let maxAcertos = 0;
 
+
     meusJogos.forEach(
         jogoObj => {
 
@@ -1164,54 +1310,56 @@ function conferir() {
 
             const jogoHtml =
                 jogoObj.numeros
-                .map(numero => {
+                .map(
+                    numero => {
 
-                    const formatado =
-                        numero
-                        .toString()
-                        .padStart(
-                            2,
-                            "0"
-                        );
-
-                    if (
-                        sorteados.includes(
+                        const formatado =
                             numero
-                        )
-                    ) {
+                            .toString()
+                            .padStart(
+                                2,
+                                "0"
+                            );
 
-                        acertos++;
+                        if (
+                            sorteados.includes(
+                                numero
+                            )
+                        ) {
+
+                            acertos++;
+
+                            return `
+                            <span style="
+                            display:inline-block;
+                            background:linear-gradient(145deg,#34D399,#10B981);
+                            color:#000;
+                            padding:2px 5px;
+                            border-radius:5px;
+                            font-weight:900;
+                            margin:0 1px;
+                            box-shadow:0 2px 4px rgba(0,0,0,.3);
+                            ">
+                            ${formatado}
+                            </span>`;
+
+                        }
 
                         return `
                         <span style="
                         display:inline-block;
-                        background:linear-gradient(145deg,#34D399,#10B981);
-                        color:#000;
+                        background:#374151;
+                        color:#E5E7EB;
                         padding:2px 5px;
                         border-radius:5px;
-                        font-weight:900;
+                        font-weight:700;
                         margin:0 1px;
-                        box-shadow:0 2px 4px rgba(0,0,0,.3);
                         ">
                         ${formatado}
                         </span>`;
 
                     }
-
-                    return `
-                    <span style="
-                    display:inline-block;
-                    background:#374151;
-                    color:#E5E7EB;
-                    padding:2px 5px;
-                    border-radius:5px;
-                    font-weight:700;
-                    margin:0 1px;
-                    ">
-                    ${formatado}
-                    </span>`;
-
-                })
+                )
                 .join("");
 
             maxAcertos =
@@ -1222,17 +1370,20 @@ function conferir() {
 
             let faixa = "";
 
-            if (acertos === 4)
+            if (acertos === 4) {
                 faixa =
                     "🏅 QUADRA";
+            }
 
-            if (acertos === 5)
+            if (acertos === 5) {
                 faixa =
                     "🔥 QUINA";
+            }
 
-            if (acertos === 6)
+            if (acertos === 6) {
                 faixa =
                     "👑 SENA";
+            }
 
             html += `
 
@@ -1311,18 +1462,22 @@ function conferir() {
         }
     );
 
+
     lista.innerHTML =
         html;
+
 
     document.getElementById(
         "resultado-box"
     ).style.display =
         "block";
 
+
     document.getElementById(
         "btn-wa"
     ).style.display =
         "block";
+
 
     document.getElementById(
         "btn-foto"
@@ -1334,6 +1489,7 @@ function conferir() {
         document.getElementById(
             "alerta"
         );
+
 
     if (maxAcertos >= 4) {
 
@@ -1426,6 +1582,7 @@ function copiarWhatsApp() {
             "restantes"
         ).value;
 
+
     let texto =
 `🍀 *RESUMO MEGA-SENA*
 🔢 *Concurso:* ${concurso}
@@ -1435,6 +1592,7 @@ function copiarWhatsApp() {
 ✨ *Resultado:* ${sorteados.map(n => n.toString().padStart(2,"0")).join(" ")}
 --------------------------
 `;
+
 
     meusJogos.forEach(
         jogo => {
@@ -1447,26 +1605,30 @@ function copiarWhatsApp() {
 
             const numeros =
                 jogo.numeros
-                .map(n => {
+                .map(
+                    n => {
 
-                    const f =
-                        n
-                        .toString()
-                        .padStart(
-                            2,
-                            "0"
-                        );
+                        const f =
+                            n
+                            .toString()
+                            .padStart(
+                                2,
+                                "0"
+                            );
 
-                    return sorteados.includes(n)
-                        ? `*${f}*`
-                        : f;
+                        return sorteados.includes(n)
+                            ? `*${f}*`
+                            : f;
 
-                })
+                    }
+                )
                 .join("  ");
+
 
             texto +=
 `👤 *${jogo.dono}*
 🎲 ${numeros}`;
+
 
             if (acertos > 0) {
 
@@ -1480,9 +1642,11 @@ function copiarWhatsApp() {
         }
     );
 
+
     texto +=
 `--------------------------
 ⏳ *Sorteios restantes:* ${restantes}`;
+
 
     navigator.clipboard
         .writeText(texto)
@@ -1567,7 +1731,9 @@ async function gerarFotoResultado() {
 
     } catch(error) {
 
-        console.error(error);
+        console.error(
+            error
+        );
 
         alert(
             "Não foi possível gerar a imagem."
