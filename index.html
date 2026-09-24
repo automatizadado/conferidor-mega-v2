@@ -1,0 +1,1592 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conferidor Premium Mega-Sena</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<style>
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #000;
+    color: #E5E7EB;
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    min-height: 100vh;
+    align-items: center;
+}
+
+.card {
+    background: #121214;
+    padding: 25px;
+    border-radius: 20px;
+    max-width: 450px;
+    width: 100%;
+    box-shadow: 0 15px 35px rgba(0,0,0,.6);
+    border: 1px solid #2ebd59;
+    border-top: 8px solid #2ebd59;
+}
+
+h2 {
+    color: #2ebd59;
+    text-align: center;
+    margin: 5px 0 20px;
+    font-weight: 700;
+    letter-spacing: -.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.input-group-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+label {
+    display: block;
+    font-size: .85em;
+    color: #9CA3AF;
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+}
+
+input {
+    padding: 12px;
+    border: 1px solid #374151;
+    border-radius: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 16px;
+    background: #1F2937;
+    color: #FFF;
+    font-weight: 500;
+}
+
+input:focus {
+    border-color: #2ebd59;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(46,189,89,.2);
+}
+
+.sorteados-container {
+    display: grid;
+    grid-template-columns: repeat(6,1fr);
+    gap: 6px;
+    margin-top: 5px;
+}
+
+.sorteados-container input {
+    text-align: center;
+    padding: 12px 2px;
+    font-weight: 800;
+    font-size: 1.1em;
+    background: #111827;
+    border: 1px solid #2ebd59;
+    border-radius: 8px;
+}
+
+button {
+    width: 100%;
+    padding: 15px 20px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: .95em;
+    margin-top: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-api {
+    background: linear-gradient(135deg,#0088ff,#0055ff);
+    color: white;
+}
+
+.btn-backup {
+    background: linear-gradient(135deg,#4B5563,#374151);
+    color: white;
+}
+
+.btn-check {
+    background: linear-gradient(135deg,#2ebd59,#1b5e20);
+    color: white;
+}
+
+.btn-manage {
+    background: linear-gradient(135deg,#374151,#1F2937);
+    color: white;
+}
+
+.btn-whatsapp {
+    background: linear-gradient(135deg,#25d366,#128c7e);
+    color: white;
+    display: none;
+}
+
+.btn-foto {
+    background: linear-gradient(135deg,#00b4db,#0083b0);
+    color: white;
+    display: none;
+}
+
+#status {
+    font-size: .85em;
+    text-align: center;
+    color: #9CA3AF;
+    margin-bottom: 12px;
+}
+
+.ciclo-info {
+    text-align: center;
+    color: #9CA3AF;
+    font-size: .78em;
+    margin: -5px 0 12px;
+}
+
+.backup-section {
+    border-top: 1px dashed #374151;
+    margin-top: 15px;
+    padding-top: 15px;
+    margin-bottom: 15px;
+}
+
+.resultado {
+    margin-top: 20px;
+    display: none;
+}
+
+.alerta-vitoria {
+    color: #FFF;
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 15px;
+    font-weight: 800;
+    text-align: center;
+    display: none;
+}
+
+.gerenciar {
+    display: none;
+    background: #0F1115;
+    border: 1px solid #374151;
+    border-radius: 12px;
+    padding: 12px;
+    margin-top: 12px;
+}
+
+.jogo-edit {
+    border-bottom: 1px dashed #374151;
+    padding: 10px 0;
+}
+
+.jogo-edit:last-child {
+    border-bottom: none;
+}
+
+/* ========================================================= */
+/* PRINT DO WHATSAPP - MANTER COMPACTO                       */
+/* ========================================================= */
+
+.card.capturando {
+    padding: 18px;
+    border: none;
+    background: #0F1115;
+}
+
+.card.capturando h2 {
+    margin-bottom: 12px;
+    font-size: 1.25em;
+}
+
+.card.capturando .input-group-row {
+    margin-bottom: 8px;
+    gap: 8px;
+}
+
+.card.capturando label {
+    font-size: .7em;
+    margin-bottom: 3px;
+}
+
+.card.capturando input:not(#s1):not(#s2):not(#s3):not(#s4):not(#s5):not(#s6) {
+    padding: 12px 10px !important;
+    font-size: 14px !important;
+    height: auto !important;
+    line-height: 1.4 !important;
+}
+
+.card.capturando .sorteados-container {
+    margin-bottom: 12px;
+    gap: 6px;
+}
+
+.card.capturando .sorteados-container input {
+    padding: 12px 0 !important;
+    line-height: 1.2 !important;
+    font-size: 1.1em !important;
+    background: #1F2937 !important;
+    border: 1px solid #374151 !important;
+    color: #34D399 !important;
+}
+
+.card.capturando #proximo-premio {
+    color: #F59E0B !important;
+}
+
+.card.capturando #acumulou {
+    color: #34D399 !important;
+}
+
+/* Tudo abaixo fica fora do print */
+
+.card.capturando .btn-api,
+.card.capturando .btn-backup,
+.card.capturando .backup-section,
+.card.capturando .btn-check,
+.card.capturando .btn-manage,
+.card.capturando .gerenciar,
+.card.capturando .btn-whatsapp,
+.card.capturando .btn-foto,
+.card.capturando #status,
+.card.capturando .ciclo-info {
+    display: none !important;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<h2>🍀 💰 Conferidor Mega-Sena 💰 🍀</h2>
+
+<div id="status">
+Digite o concurso ou deixe vazio para buscar o último
+</div>
+
+<!-- NÃO APARECE NO PRINT -->
+<div class="ciclo-info" id="ciclo-info"></div>
+
+<div class="input-group-row">
+
+<div style="flex:1.2">
+<label>Concurso</label>
+<input type="number" id="concurso" placeholder="Ex: 3050">
+</div>
+
+<div style="flex:.9">
+<label>Restantes</label>
+<input type="number" id="restantes" value="12" readonly>
+</div>
+
+<div style="flex:1.1">
+<label>Acumulou?</label>
+<input type="text" id="acumulou" readonly
+style="font-weight:bold;text-align:center">
+</div>
+
+</div>
+
+<button class="btn-api" onclick="buscarResultado()">
+🔄 1. Buscar Automático
+</button>
+
+<div class="backup-section">
+
+<div style="
+font-size:.8em;
+color:#9CA3AF;
+text-align:center;
+margin-bottom:8px;
+">
+Se a busca automática falhar, importe o arquivo da Caixa.
+Agora você também pode selecionar vários arquivos.
+</div>
+
+<input
+type="file"
+id="arquivo-caixa"
+accept=".json,.txt,.html"
+multiple
+style="display:none"
+onchange="importarArquivos(event)"
+>
+
+<button
+class="btn-backup"
+onclick="document.getElementById('arquivo-caixa').click()">
+📁 2. Importar Resultado(s)
+</button>
+
+</div>
+
+<div class="input-group-row">
+
+<div style="flex:1">
+<label>Prêmio Sorteado (R$)</label>
+<input type="text" id="premio">
+</div>
+
+<div style="flex:1">
+<label>Próximo Prêmio (R$)</label>
+<input
+type="text"
+id="proximo-premio"
+style="color:#F59E0B;font-weight:bold">
+</div>
+
+</div>
+
+<label>Números Sorteados</label>
+
+<div class="sorteados-container">
+
+<input type="number" id="s1" min="1" max="60">
+<input type="number" id="s2" min="1" max="60">
+<input type="number" id="s3" min="1" max="60">
+<input type="number" id="s4" min="1" max="60">
+<input type="number" id="s5" min="1" max="60">
+<input type="number" id="s6" min="1" max="60">
+
+</div>
+
+<button
+class="btn-check"
+style="margin-top:20px"
+onclick="conferir()">
+Conferir Meus Jogos 🎯
+</button>
+
+<button
+class="btn-manage"
+onclick="abrirGerenciador()">
+⚙️ Gerenciar Jogos
+</button>
+
+<div id="gerenciar" class="gerenciar"></div>
+
+<div id="alerta" class="alerta-vitoria"></div>
+
+<div id="resultado-box" class="resultado">
+
+<div id="lista-acertos"></div>
+
+<button
+class="btn-whatsapp"
+id="btn-wa"
+onclick="copiarWhatsApp()">
+Copiar para WhatsApp 📱
+</button>
+
+<button
+class="btn-foto"
+id="btn-foto"
+onclick="gerarFotoResultado()">
+Salvar Imagem do Resultado 📸
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+/* =========================================================
+   CONFIGURAÇÃO
+========================================================= */
+
+const TOTAL_CICLO = 12;
+
+const jogosOriginais = [
+    { dono:"Victor",  numeros:[1,6,14,17,24,57] },
+    { dono:"Marcelo", numeros:[5,10,23,37,40,53] },
+    { dono:"William", numeros:[17,23,36,37,45,53] },
+    { dono:"Paulo",   numeros:[5,10,27,37,40,58] },
+    { dono:"Carlos",  numeros:[11,19,25,33,45,46] },
+    { dono:"Lau",     numeros:[3,8,9,23,30,34] },
+    { dono:"Neto",    numeros:[4,6,16,32,38,50] },
+    { dono:"Maycon",  numeros:[5,10,17,22,33,38] }
+];
+
+let meusJogos = [];
+let concursosCiclo = [];
+
+
+/* =========================================================
+   INICIALIZAÇÃO
+========================================================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    carregarJogos();
+    carregarCiclo();
+
+    atualizarRestantes();
+    montarGerenciador();
+
+});
+
+
+function carregarJogos() {
+
+    const salvo = localStorage.getItem("mega_jogos_v2");
+
+    if (salvo) {
+
+        try {
+            meusJogos = JSON.parse(salvo);
+        } catch {
+            meusJogos = JSON.parse(JSON.stringify(jogosOriginais));
+        }
+
+    } else {
+
+        meusJogos = JSON.parse(JSON.stringify(jogosOriginais));
+
+    }
+
+}
+
+
+function carregarCiclo() {
+
+    try {
+
+        concursosCiclo =
+            JSON.parse(
+                localStorage.getItem("mega_ciclo_v2") || "[]"
+            );
+
+        if (!Array.isArray(concursosCiclo)) {
+            concursosCiclo = [];
+        }
+
+    } catch {
+
+        concursosCiclo = [];
+
+    }
+
+}
+
+
+/* =========================================================
+   CONTROLE DAS 12 TEIMOSINHAS
+========================================================= */
+
+function registrarConcurso(numero) {
+
+    numero = parseInt(numero);
+
+    if (!numero) return;
+
+    if (concursosCiclo.includes(numero)) {
+        atualizarRestantes();
+        return;
+    }
+
+    if (concursosCiclo.length >= TOTAL_CICLO) {
+        return;
+    }
+
+    concursosCiclo.push(numero);
+
+    concursosCiclo.sort((a,b) => a-b);
+
+    localStorage.setItem(
+        "mega_ciclo_v2",
+        JSON.stringify(concursosCiclo)
+    );
+
+    atualizarRestantes();
+
+}
+
+
+function atualizarRestantes() {
+
+    const utilizados = concursosCiclo.length;
+
+    const restantes =
+        Math.max(0, TOTAL_CICLO - utilizados);
+
+    document.getElementById("restantes").value =
+        restantes;
+
+    const info =
+        document.getElementById("ciclo-info");
+
+    if (utilizados === 0) {
+
+        info.innerText =
+            "Novo ciclo • 12 concursos restantes";
+
+    } else if (restantes > 0) {
+
+        info.innerText =
+            `${utilizados}/12 concursos registrados`;
+
+    } else {
+
+        info.innerText =
+            "12/12 concursos registrados • ciclo concluído";
+
+    }
+
+}
+
+
+/* =========================================================
+   GERENCIADOR DE JOGOS
+========================================================= */
+
+function abrirGerenciador() {
+
+    const box =
+        document.getElementById("gerenciar");
+
+    if (box.style.display === "block") {
+
+        box.style.display = "none";
+
+    } else {
+
+        montarGerenciador();
+
+        box.style.display = "block";
+
+    }
+
+}
+
+
+function montarGerenciador() {
+
+    const box =
+        document.getElementById("gerenciar");
+
+    let html = `
+        <div style="
+        color:#2ebd59;
+        font-weight:800;
+        margin-bottom:5px;
+        ">
+        Jogos cadastrados
+        </div>
+
+        <div style="
+        color:#9CA3AF;
+        font-size:.75em;
+        margin-bottom:8px;
+        ">
+        Digite exatamente 6 números entre 1 e 60.
+        </div>
+    `;
+
+    meusJogos.forEach((jogo,i) => {
+
+        html += `
+
+        <div class="jogo-edit">
+
+        <div style="
+        color:#60A5FA;
+        font-weight:700;
+        ">
+        👤 ${jogo.dono}
+        </div>
+
+        <input
+        id="edit-${i}"
+        value="${jogo.numeros
+        .map(n => String(n).padStart(2,"0"))
+        .join(" ")}"
+        >
+
+        <button
+        class="btn-check"
+        style="
+        padding:9px;
+        margin-top:7px;
+        "
+        onclick="salvarJogo(${i})">
+        Salvar
+        </button>
+
+        </div>
+
+        `;
+
+    });
+
+    box.innerHTML = html;
+
+}
+
+
+function salvarJogo(index) {
+
+    const texto =
+        document.getElementById(
+            "edit-" + index
+        ).value;
+
+    const numeros =
+        texto
+        .split(/[,\s;]+/)
+        .filter(Boolean)
+        .map(Number);
+
+    if (!validarDezenas(numeros)) {
+
+        alert(
+            "Informe exatamente 6 números únicos entre 1 e 60."
+        );
+
+        return;
+
+    }
+
+    numeros.sort((a,b) => a-b);
+
+    meusJogos[index].numeros =
+        numeros;
+
+    localStorage.setItem(
+        "mega_jogos_v2",
+        JSON.stringify(meusJogos)
+    );
+
+    montarGerenciador();
+
+    alert(
+        `Jogo de ${meusJogos[index].dono} salvo!`
+    );
+
+}
+
+
+/* =========================================================
+   VALIDAÇÃO
+========================================================= */
+
+function validarDezenas(numeros) {
+
+    return (
+        numeros.length === 6 &&
+        new Set(numeros).size === 6 &&
+        numeros.every(
+            n =>
+            Number.isInteger(n) &&
+            n >= 1 &&
+            n <= 60
+        )
+    );
+
+}
+
+
+function getSorteados() {
+
+    return [1,2,3,4,5,6]
+        .map(
+            i =>
+            parseInt(
+                document.getElementById(
+                    "s" + i
+                ).value
+            )
+        )
+        .filter(Number.isFinite);
+
+}
+
+
+/* =========================================================
+   FETCH COM TIMEOUT
+========================================================= */
+
+async function fetchComTimeout(
+    url,
+    tempo = 6500
+) {
+
+    const controller =
+        new AbortController();
+
+    const timer =
+        setTimeout(
+            () => controller.abort(),
+            tempo
+        );
+
+    try {
+
+        return await fetch(
+            url,
+            {
+                signal:controller.signal,
+                cache:"no-store"
+            }
+        );
+
+    } finally {
+
+        clearTimeout(timer);
+
+    }
+
+}
+
+
+/* =========================================================
+   NORMALIZADOR DE RESULTADOS
+========================================================= */
+
+function normalizarResultado(data) {
+
+    const numero =
+        Number(
+            data.numero ??
+            data.concurso
+        );
+
+    const dezenas =
+        (
+            data.listaDezenas ??
+            data.dezenas ??
+            []
+        )
+        .map(Number);
+
+    if (
+        !Number.isInteger(numero) ||
+        !validarDezenas(dezenas)
+    ) {
+
+        throw new Error(
+            "Resultado inválido"
+        );
+
+    }
+
+    const acumulado =
+        Boolean(
+            data.acumulado ??
+            data.acumulou
+        );
+
+    const proximo =
+        Number(
+            data.valorEstimadoProximoConcurso ??
+            0
+        );
+
+    let premio = 0;
+
+    if (
+        data.listaRateioPremio &&
+        data.listaRateioPremio[0]
+    ) {
+
+        premio =
+            Number(
+                data.listaRateioPremio[0]
+                .valorPremio || 0
+            );
+
+    }
+
+    if (
+        data.premiacoes &&
+        data.premiacoes[0]
+    ) {
+
+        premio =
+            Number(
+                data.premiacoes[0]
+                .premio || 0
+            );
+
+    }
+
+    return {
+        numero,
+        dezenas,
+        acumulado,
+        premio,
+        proximo
+    };
+
+}
+
+
+/* =========================================================
+   BUSCA AUTOMÁTICA
+========================================================= */
+
+async function buscarResultado() {
+
+    const concurso =
+        document
+        .getElementById("concurso")
+        .value
+        .trim();
+
+    const status =
+        document.getElementById("status");
+
+    status.innerText =
+        concurso
+        ? `Buscando concurso ${concurso}...`
+        : "Buscando último resultado...";
+
+    status.style.color =
+        "#F59E0B";
+
+    const endpoints = [
+
+        `https://loteriascaixa-api.onrender.com/api/megasena/${concurso || "latest"}`,
+
+        `https://api.guidi.dev.br/loteria/megasena/${concurso || "ultimo"}`,
+
+        `https://api.allorigins.win/raw?url=${
+            encodeURIComponent(
+                "https://servicebus2.caixa.gov.br/portaldeloterias/api/megasena/" +
+                concurso
+            )
+        }`
+
+    ];
+
+    for (const url of endpoints) {
+
+        try {
+
+            const response =
+                await fetchComTimeout(url);
+
+            if (!response.ok) {
+                continue;
+            }
+
+            const data =
+                await response.json();
+
+            const resultado =
+                normalizarResultado(data);
+
+            preencherResultado(resultado);
+
+            status.innerText =
+                `Sorteio ${resultado.numero} atualizado com sucesso!`;
+
+            status.style.color =
+                "#2ebd59";
+
+            return;
+
+        } catch(error) {
+
+            console.warn(
+                "Fonte indisponível",
+                error
+            );
+
+        }
+
+    }
+
+    status.innerText =
+        "Busca automática indisponível. Use a importação.";
+
+    status.style.color =
+        "#EF4444";
+
+}
+
+
+/* =========================================================
+   IMPORTAÇÃO - UM OU VÁRIOS ARQUIVOS
+========================================================= */
+
+function extrairJSON(texto) {
+
+    let conteudo =
+        texto.trim();
+
+    const pre =
+        conteudo.match(
+            /<pre[^>]*>([\s\S]*?)<\/pre>/i
+        );
+
+    if (pre) {
+        conteudo = pre[1];
+    }
+
+    conteudo =
+        conteudo
+        .replace(/<[^>]+>/g,"")
+        .replace(/&quot;/g,'"')
+        .replace(/&amp;/g,"&")
+        .trim();
+
+    return JSON.parse(conteudo);
+
+}
+
+
+async function importarArquivos(event) {
+
+    const arquivos =
+        Array.from(
+            event.target.files
+        );
+
+    if (!arquivos.length) {
+        return;
+    }
+
+    const resultados = [];
+    const erros = [];
+
+    for (const arquivo of arquivos) {
+
+        try {
+
+            const texto =
+                await arquivo.text();
+
+            const json =
+                extrairJSON(texto);
+
+            const resultado =
+                normalizarResultado(json);
+
+            resultados.push(resultado);
+
+        } catch(error) {
+
+            erros.push(
+                arquivo.name
+            );
+
+        }
+
+    }
+
+    resultados.sort(
+        (a,b) =>
+        a.numero - b.numero
+    );
+
+    resultados.forEach(
+        resultado => {
+
+            registrarConcurso(
+                resultado.numero
+            );
+
+        }
+    );
+
+    if (resultados.length) {
+
+        const ultimo =
+            resultados[
+                resultados.length - 1
+            ];
+
+        preencherResultado(
+            ultimo
+        );
+
+        const status =
+            document.getElementById(
+                "status"
+            );
+
+        status.innerText =
+            `${resultados.length} resultado(s) importado(s). Último: ${ultimo.numero}`;
+
+        status.style.color =
+            "#2ebd59";
+
+    }
+
+    if (erros.length) {
+
+        alert(
+            "Não consegui ler:\n" +
+            erros.join("\n")
+        );
+
+    }
+
+    event.target.value = "";
+
+}
+
+
+/* =========================================================
+   PREENCHER RESULTADO
+========================================================= */
+
+function preencherResultado(resultado) {
+
+    document.getElementById(
+        "concurso"
+    ).value =
+        resultado.numero;
+
+    const acumulou =
+        document.getElementById(
+            "acumulou"
+        );
+
+    acumulou.value =
+        resultado.acumulado
+        ? "SIM! 🚀"
+        : "NÃO 🎯";
+
+    acumulou.style.color =
+        resultado.acumulado
+        ? "#34D399"
+        : "#60A5FA";
+
+    resultado.dezenas.forEach(
+        (numero,index) => {
+
+            document.getElementById(
+                "s" + (index + 1)
+            ).value =
+                numero;
+
+        }
+    );
+
+    document.getElementById(
+        "premio"
+    ).value =
+        resultado.premio
+        ? resultado.premio
+            .toLocaleString(
+                "pt-BR",
+                {
+                    minimumFractionDigits:2
+                }
+            )
+        : "--- (Edite o valor)";
+
+    document.getElementById(
+        "proximo-premio"
+    ).value =
+        resultado.proximo
+        ? resultado.proximo
+            .toLocaleString(
+                "pt-BR",
+                {
+                    minimumFractionDigits:2
+                }
+            )
+        : "---";
+
+}
+
+
+/* =========================================================
+   CONFERÊNCIA
+========================================================= */
+
+function conferir() {
+
+    const sorteados =
+        getSorteados();
+
+    if (
+        !validarDezenas(
+            sorteados
+        )
+    ) {
+
+        alert(
+            "Preencha 6 dezenas únicas entre 1 e 60."
+        );
+
+        return;
+
+    }
+
+    const concurso =
+        document.getElementById(
+            "concurso"
+        ).value;
+
+    if (concurso) {
+        registrarConcurso(
+            concurso
+        );
+    }
+
+    const lista =
+        document.getElementById(
+            "lista-acertos"
+        );
+
+    lista.style.display =
+        "grid";
+
+    lista.style.gridTemplateColumns =
+        "1fr 1fr";
+
+    lista.style.gap =
+        "10px";
+
+    let html = "";
+    let maxAcertos = 0;
+
+    meusJogos.forEach(
+        jogoObj => {
+
+            let acertos = 0;
+
+            const jogoHtml =
+                jogoObj.numeros
+                .map(numero => {
+
+                    const formatado =
+                        numero
+                        .toString()
+                        .padStart(
+                            2,
+                            "0"
+                        );
+
+                    if (
+                        sorteados.includes(
+                            numero
+                        )
+                    ) {
+
+                        acertos++;
+
+                        return `
+                        <span style="
+                        display:inline-block;
+                        background:linear-gradient(145deg,#34D399,#10B981);
+                        color:#000;
+                        padding:2px 5px;
+                        border-radius:5px;
+                        font-weight:900;
+                        margin:0 1px;
+                        box-shadow:0 2px 4px rgba(0,0,0,.3);
+                        ">
+                        ${formatado}
+                        </span>`;
+
+                    }
+
+                    return `
+                    <span style="
+                    display:inline-block;
+                    background:#374151;
+                    color:#E5E7EB;
+                    padding:2px 5px;
+                    border-radius:5px;
+                    font-weight:700;
+                    margin:0 1px;
+                    ">
+                    ${formatado}
+                    </span>`;
+
+                })
+                .join("");
+
+            maxAcertos =
+                Math.max(
+                    maxAcertos,
+                    acertos
+                );
+
+            let faixa = "";
+
+            if (acertos === 4)
+                faixa =
+                    "🏅 QUADRA";
+
+            if (acertos === 5)
+                faixa =
+                    "🔥 QUINA";
+
+            if (acertos === 6)
+                faixa =
+                    "👑 SENA";
+
+            html += `
+
+            <div style="
+            background:#181C25;
+            padding:12px 8px;
+            border-radius:10px;
+            border-top:4px solid ${acertos >= 4 ? "#10B981" : "#374151"};
+            box-shadow:0 4px 6px rgba(0,0,0,.25);
+            display:flex;
+            flex-direction:column;
+            justify-content:space-between;
+            ">
+
+            <div style="
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            border-bottom:1px dashed #374151;
+            padding-bottom:8px;
+            margin-bottom:10px;
+            ">
+
+            <span style="
+            font-size:.9em;
+            color:#60A5FA;
+            font-weight:700;
+            white-space:nowrap;
+            ">
+            👤 ${jogoObj.dono}
+            </span>
+
+            <span style="
+            font-size:.85em;
+            color:${acertos >= 4 ? "#34D399" : "#9CA3AF"};
+            font-weight:700;
+            ">
+            🎯 ${acertos} acertos
+            </span>
+
+            </div>
+
+            <div style="
+            font-size:1.05em;
+            text-align:center;
+            white-space:nowrap;
+            ">
+            ${jogoHtml}
+            </div>
+
+            ${
+                faixa
+                ?
+                `
+                <div style="
+                margin-top:10px;
+                text-align:center;
+                font-size:.85em;
+                background:linear-gradient(135deg,#10B981,#047857);
+                color:#fff;
+                font-weight:800;
+                border-radius:4px;
+                padding:4px;
+                ">
+                ${faixa}
+                </div>
+                `
+                :
+                ""
+            }
+
+            </div>
+
+            `;
+
+        }
+    );
+
+    lista.innerHTML =
+        html;
+
+    document.getElementById(
+        "resultado-box"
+    ).style.display =
+        "block";
+
+    document.getElementById(
+        "btn-wa"
+    ).style.display =
+        "block";
+
+    document.getElementById(
+        "btn-foto"
+    ).style.display =
+        "block";
+
+
+    const alerta =
+        document.getElementById(
+            "alerta"
+        );
+
+    if (maxAcertos >= 4) {
+
+        if (maxAcertos === 6) {
+
+            alerta.innerHTML =
+                "👑 ACERTAMOS AS SEIS DEZENAS! 🤑 👑";
+
+            alerta.style.background =
+                "linear-gradient(135deg,#D97706,#92400E)";
+
+        } else if (
+            maxAcertos === 5
+        ) {
+
+            alerta.innerHTML =
+                "🔥 ACERTAMOS A QUINA! 🤑 🔥";
+
+            alerta.style.background =
+                "linear-gradient(135deg,#064E3B,#047857)";
+
+        } else {
+
+            alerta.innerHTML =
+                "🏅 ACERTAMOS A QUADRA! 🤑 🏅";
+
+            alerta.style.background =
+                "linear-gradient(135deg,#064E3B,#047857)";
+
+        }
+
+        alerta.style.display =
+            "block";
+
+    } else {
+
+        alerta.style.display =
+            "none";
+
+    }
+
+}
+
+
+/* =========================================================
+   WHATSAPP
+========================================================= */
+
+function copiarWhatsApp() {
+
+    const sorteados =
+        getSorteados();
+
+    if (
+        !validarDezenas(
+            sorteados
+        )
+    ) {
+
+        alert(
+            "Não há resultado completo para copiar!"
+        );
+
+        return;
+
+    }
+
+    const concurso =
+        document.getElementById(
+            "concurso"
+        ).value || "---";
+
+    const premio =
+        document.getElementById(
+            "premio"
+        ).value || "---";
+
+    const proximo =
+        document.getElementById(
+            "proximo-premio"
+        ).value || "---";
+
+    const acumulou =
+        document.getElementById(
+            "acumulou"
+        ).value || "---";
+
+    const restantes =
+        document.getElementById(
+            "restantes"
+        ).value;
+
+    let texto =
+`🍀 *RESUMO MEGA-SENA*
+🔢 *Concurso:* ${concurso}
+💰 *Prêmio Concurso:* R$ ${premio}
+🚀 *Acumulou:* ${acumulou}
+🔮 *Próximo Prêmio:* R$ ${proximo}
+✨ *Resultado:* ${sorteados.map(n => n.toString().padStart(2,"0")).join(" ")}
+--------------------------
+`;
+
+    meusJogos.forEach(
+        jogo => {
+
+            const acertos =
+                jogo.numeros.filter(
+                    n =>
+                    sorteados.includes(n)
+                ).length;
+
+            const numeros =
+                jogo.numeros
+                .map(n => {
+
+                    const f =
+                        n
+                        .toString()
+                        .padStart(
+                            2,
+                            "0"
+                        );
+
+                    return sorteados.includes(n)
+                        ? `*${f}*`
+                        : f;
+
+                })
+                .join("  ");
+
+            texto +=
+`👤 *${jogo.dono}*
+🎲 ${numeros}`;
+
+            if (acertos > 0) {
+
+                texto +=
+`  -> *${acertos} ${acertos === 1 ? "acerto" : "acertos"}*`;
+
+            }
+
+            texto += "\n\n";
+
+        }
+    );
+
+    texto +=
+`--------------------------
+⏳ *Sorteios restantes:* ${restantes}`;
+
+    navigator.clipboard
+        .writeText(texto)
+        .then(
+            () =>
+            alert(
+                "Resumo copiado para o WhatsApp!"
+            )
+        )
+        .catch(
+            () =>
+            alert(
+                "Erro ao copiar."
+            )
+        );
+
+}
+
+
+/* =========================================================
+   IMAGEM
+========================================================= */
+
+async function gerarFotoResultado() {
+
+    const card =
+        document.querySelector(
+            ".card"
+        );
+
+    const botao =
+        document.getElementById(
+            "btn-foto"
+        );
+
+    botao.innerText =
+        "Gerando Imagem... ⌛";
+
+    card.classList.add(
+        "capturando"
+    );
+
+    await new Promise(
+        resolve =>
+        setTimeout(
+            resolve,
+            150
+        )
+    );
+
+    try {
+
+        const canvas =
+            await html2canvas(
+                card,
+                {
+                    scale:2,
+                    backgroundColor:"#0F1115",
+                    useCORS:true
+                }
+            );
+
+        const concurso =
+            document.getElementById(
+                "concurso"
+            ).value || "Mega";
+
+        const link =
+            document.createElement(
+                "a"
+            );
+
+        link.download =
+            `Resultado_Mega_${concurso}.png`;
+
+        link.href =
+            canvas.toDataURL(
+                "image/png"
+            );
+
+        link.click();
+
+    } catch(error) {
+
+        console.error(error);
+
+        alert(
+            "Não foi possível gerar a imagem."
+        );
+
+    } finally {
+
+        card.classList.remove(
+            "capturando"
+        );
+
+        botao.innerText =
+            "Salvar Imagem do Resultado 📸";
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
