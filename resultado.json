@@ -1,17 +1,17 @@
 {
-  "concurso": 3062,
-  "data": "24/09/2026",
+  "concurso": 3063,
+  "data": "27/09/2026",
   "dezenas": [
     "05",
-    "09",
-    "11",
-    "17",
-    "18",
-    "38"
+    "35",
+    "36",
+    "41",
+    "43",
+    "48"
   ],
   "acumulou": true,
-  "premioSorteado": 38000000.0,
-  "proximoPremio": 45000000.0,
-  "concursoAnterior": 3061,
-  "atualizadoEm": "2026-09-28T01:30:30.913944+00:00"
+  "premioSorteado": 45000000.0,
+  "proximoPremio": 52000000.0,
+  "concursoAnterior": 3062,
+  "atualizadoEm": "2026-09-28T08:32:31.402197+00:00"
 }
