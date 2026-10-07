@@ -10,9 +10,10 @@
     3063,
     3064,
     3065,
-    3066
+    3066,
+    3067
   ],
-  "restantes": 7,
+  "restantes": 6,
   "jogos": [
     {
       "dono": "Victor",
@@ -850,6 +851,162 @@
         }
       ],
       "processadoEm": "2026-10-04T05:28:48.130545+00:00"
+    },
+    {
+      "concurso": 3067,
+      "data": "06/10/2026",
+      "dezenas": [
+        1,
+        4,
+        17,
+        33,
+        41,
+        52
+      ],
+      "acumulou": true,
+      "premioSorteado": 92000000.0,
+      "proximoPremio": 100000000.0,
+      "resultados": [
+        {
+          "dono": "Victor",
+          "numeros": [
+            1,
+            13,
+            19,
+            24,
+            49,
+            57
+          ],
+          "acertos": 1,
+          "dezenasAcertadas": [
+            1
+          ],
+          "faixa": null
+        },
+        {
+          "dono": "Marcelo",
+          "numeros": [
+            5,
+            10,
+            23,
+            37,
+            40,
+            53
+          ],
+          "acertos": 0,
+          "dezenasAcertadas": [],
+          "faixa": null
+        },
+        {
+          "dono": "William",
+          "numeros": [
+            10,
+            25,
+            33,
+            36,
+            47,
+            51
+          ],
+          "acertos": 1,
+          "dezenasAcertadas": [
+            33
+          ],
+          "faixa": null
+        },
+        {
+          "dono": "Paulo",
+          "numeros": [
+            5,
+            10,
+            27,
+            33,
+            42,
+            53
+          ],
+          "acertos": 1,
+          "dezenasAcertadas": [
+            33
+          ],
+          "faixa": null
+        },
+        {
+          "dono": "Carlos",
+          "numeros": [
+            11,
+            19,
+            25,
+            33,
+            45,
+            46
+          ],
+          "acertos": 1,
+          "dezenasAcertadas": [
+            33
+          ],
+          "faixa": null
+        },
+        {
+          "dono": "Lau",
+          "numeros": [
+            8,
+            9,
+            11,
+            19,
+            23,
+            24
+          ],
+          "acertos": 0,
+          "dezenasAcertadas": [],
+          "faixa": null
+        },
+        {
+          "dono": "Neto",
+          "numeros": [
+            4,
+            6,
+            16,
+            32,
+            38,
+            50
+          ],
+          "acertos": 1,
+          "dezenasAcertadas": [
+            4
+          ],
+          "faixa": null
+        },
+        {
+          "dono": "Maycon",
+          "numeros": [
+            6,
+            11,
+            22,
+            28,
+            35,
+            42
+          ],
+          "acertos": 0,
+          "dezenasAcertadas": [],
+          "faixa": null
+        },
+        {
+          "dono": "Ari",
+          "numeros": [
+            5,
+            11,
+            17,
+            24,
+            28,
+            29
+          ],
+          "acertos": 1,
+          "dezenasAcertadas": [
+            17
+          ],
+          "faixa": null
+        }
+      ],
+      "processadoEm": "2026-10-07T05:31:26.881989+00:00"
     }
   ]
 }
