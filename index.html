@@ -188,6 +188,54 @@ button:disabled {
     border-bottom: none;
 }
 
+.manual-details {
+    margin-top: 12px;
+    border: 1px solid #374151;
+    border-radius: 12px;
+    background: #0F1115;
+    overflow: hidden;
+}
+
+.manual-details summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 13px 14px;
+    color: #D1D5DB;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    user-select: none;
+}
+
+.manual-details summary::-webkit-details-marker { display: none; }
+
+.manual-details summary::after {
+    content: "⌄";
+    color: #F59E0B;
+    font-size: 1.35em;
+    line-height: 1;
+    transition: transform .2s ease;
+}
+
+.manual-details[open] summary::after { transform: rotate(180deg); }
+
+.manual-details summary span {
+    margin-left: auto;
+    color: #9CA3AF;
+    font-size: .72em;
+    font-weight: 500;
+}
+
+.manual-panel {
+    display: block;
+    margin: 0;
+    border: 0;
+    border-top: 1px solid #374151;
+    border-radius: 0;
+}
+
 .jogo-numeros {
     margin-top: 7px;
     color: #E5E7EB;
@@ -409,8 +457,10 @@ onclick="carregarTudo()">
 
 </button>
 
-<div class="gerenciar" id="entrada-manual" style="display:block">
-  <div style="color:#F59E0B;font-weight:800;margin-bottom:8px">🛠️ Lançamento manual (contingência)</div>
+<details class="manual-details" id="entrada-manual">
+  <summary>🛠️ Lançamento manual <span>Toque para expandir</span></summary>
+  <div class="gerenciar manual-panel">
+  <div style="color:#F59E0B;font-weight:800;margin-bottom:8px">Lançamento manual (contingência)</div>
   <div style="color:#9CA3AF;font-size:.78em;margin-bottom:10px">Use quando o resultado automático não atualizar. O registro fica salvo neste navegador e será substituído quando o ciclo oficial alcançar o mesmo concurso.</div>
   <div class="input-group-row">
     <div style="flex:1"><label>Concurso</label><input id="manual-concurso" type="number" placeholder="Ex.: 3078"></div>
@@ -433,7 +483,8 @@ onclick="carregarTudo()">
   <button class="btn-check" onclick="salvarResultadoManual()">Salvar resultado manual</button>
   <button class="btn-manage" onclick="limparResultadoManual()">Remover lançamento manual</button>
   <div id="manual-status" style="font-size:.78em;color:#9CA3AF;margin-top:8px"></div>
-</div>
+  </div>
+</details>
 
 
 <!-- =====================================================
