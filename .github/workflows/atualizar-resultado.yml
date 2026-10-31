@@ -408,6 +408,13 @@ jobs:
               or atual.get("proximoPremio")
           )
 
+          # Algumas APIs de terceiros retornam estimativas em milhões
+          # (ex.: 6.0) em vez de reais (ex.: 6000000.0).
+          if proximo_premio is not None:
+              proximo_premio = float(proximo_premio)
+              if 0 < proximo_premio < 100000:
+                  proximo_premio *= 1000000
+
 
 
           # ==================================================
