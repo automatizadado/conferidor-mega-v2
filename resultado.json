@@ -10,14 +10,14 @@
     "59"
   ],
   "acumulou": true,
-  "premioSorteado": 0.0,
-  "premioConcurso": 6000000.0,
-  "proximoPremio": 42000000.0,
+  "premioSorteado": 0,
+  "premioConcurso": 6000000,
+  "proximoPremio": 42000000,
   "rateio": [
     {
       "faixa": 1,
       "ganhadores": 0,
-      "valorPremio": 0.0
+      "valorPremio": 0
     },
     {
       "faixa": 2,
@@ -31,5 +31,6 @@
     }
   ],
   "concursoAnterior": 3078,
-  "atualizadoEm": "2026-10-31T09:40:16.851868+00:00"
+  "atualizadoEm": "2026-10-31T09:40:16.851868+00:00",
+  "premioAtual": 6000000
 }
