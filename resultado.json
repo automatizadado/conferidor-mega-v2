@@ -1,17 +1,35 @@
 {
-  "concurso": 3077,
-  "data": "28/10/2026",
+  "concurso": 3079,
+  "data": "30/10/2026",
   "dezenas": [
-    "02",
-    "14",
-    "18",
-    "31",
-    "35",
-    "40"
+    "05",
+    "09",
+    "16",
+    "40",
+    "41",
+    "59"
   ],
-  "acumulou": false,
-  "premioSorteado": 320000000.0,
-  "proximoPremio": 2500000.0,
-  "concursoAnterior": 3076,
-  "atualizadoEm": "2026-10-30T23:59:04.346445+00:00"
+  "acumulou": true,
+  "premioSorteado": 0,
+  "proximoPremio": 42000000,
+  "concursoAnterior": 3078,
+  "rateio": [
+    {
+      "faixa": 1,
+      "ganhadores": 0,
+      "valorPremio": 0
+    },
+    {
+      "faixa": 2,
+      "ganhadores": 12,
+      "valorPremio": 50706.28
+    },
+    {
+      "faixa": 3,
+      "ganhadores": 1110,
+      "valorPremio": 783.1
+    }
+  ],
+  "atualizadoEm": "2026-10-31T00:00:00.000Z",
+  "origem": "recuperacao_manual_fontes_publicas"
 }
