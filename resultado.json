@@ -10,14 +10,14 @@
     "59"
   ],
   "acumulou": true,
-  "premioSorteado": 0,
-  "proximoPremio": 42000000,
-  "concursoAnterior": 3078,
+  "premioSorteado": 0.0,
+  "premioConcurso": 6000000.0,
+  "proximoPremio": 42000000.0,
   "rateio": [
     {
       "faixa": 1,
       "ganhadores": 0,
-      "valorPremio": 0
+      "valorPremio": 0.0
     },
     {
       "faixa": 2,
@@ -30,7 +30,6 @@
       "valorPremio": 783.1
     }
   ],
-  "atualizadoEm": "2026-10-31T00:00:00.000Z",
-  "origem": "recuperacao_manual_fontes_publicas_corrigida",
-  "premioConcurso": 6000000
+  "concursoAnterior": 3078,
+  "atualizadoEm": "2026-10-31T09:40:16.851868+00:00"
 }
