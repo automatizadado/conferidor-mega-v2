@@ -259,6 +259,7 @@ Elementos administrativos não aparecem
 na imagem compartilhada.
 */
 
+.card.capturando #entrada-manual,
 .card.capturando .btn-api,
 .card.capturando .btn-check,
 .card.capturando .btn-manage,
@@ -407,6 +408,32 @@ onclick="carregarTudo()">
 🔄 Buscar Resultado
 
 </button>
+
+<div class="gerenciar" id="entrada-manual" style="display:block">
+  <div style="color:#F59E0B;font-weight:800;margin-bottom:8px">🛠️ Lançamento manual (contingência)</div>
+  <div style="color:#9CA3AF;font-size:.78em;margin-bottom:10px">Use quando o resultado automático não atualizar. O registro fica salvo neste navegador e será substituído quando o ciclo oficial alcançar o mesmo concurso.</div>
+  <div class="input-group-row">
+    <div style="flex:1"><label>Concurso</label><input id="manual-concurso" type="number" placeholder="Ex.: 3078"></div>
+    <div style="flex:1"><label>Data do sorteio</label><input id="manual-data" type="text" placeholder="DD/MM/AAAA"></div>
+  </div>
+  <label>Seis dezenas sorteadas</label>
+  <div class="sorteados-container" style="margin-bottom:10px">
+    <input id="m1" type="number" min="1" max="60" placeholder="01">
+    <input id="m2" type="number" min="1" max="60" placeholder="02">
+    <input id="m3" type="number" min="1" max="60" placeholder="03">
+    <input id="m4" type="number" min="1" max="60" placeholder="04">
+    <input id="m5" type="number" min="1" max="60" placeholder="05">
+    <input id="m6" type="number" min="1" max="60" placeholder="06">
+  </div>
+  <div class="input-group-row">
+    <div style="flex:1"><label>Prêmio sorteado (R$)</label><input id="manual-premio" type="number" min="0" placeholder="Opcional"></div>
+    <div style="flex:1"><label>Próximo prêmio (R$)</label><input id="manual-proximo" type="number" min="0" placeholder="Opcional"></div>
+  </div>
+  <label style="display:flex;align-items:center;gap:8px;text-transform:none"><input id="manual-acumulou" type="checkbox" style="width:auto"> Acumulou</label>
+  <button class="btn-check" onclick="salvarResultadoManual()">Salvar resultado manual</button>
+  <button class="btn-manage" onclick="limparResultadoManual()">Remover lançamento manual</button>
+  <div id="manual-status" style="font-size:.78em;color:#9CA3AF;margin-top:8px"></div>
+</div>
 
 
 <!-- =====================================================
@@ -660,6 +687,9 @@ async function carregarTudo() {
         dadosCiclo =
             ciclo;
 
+        localStorage.setItem("mega_resultado_cache", JSON.stringify(resultado));
+        aplicarResultadoManualSeNecessario(resultado);
+        atualizarStatusManual();
 
         meusJogos =
             ciclo.jogos.map(
@@ -800,6 +830,135 @@ async function carregarTudo() {
 
     }
 
+}
+
+
+/* =========================================================
+   CONTINGÊNCIA: RESULTADO MANUAL LOCAL
+========================================================= */
+
+const CHAVE_RESULTADO_MANUAL = "mega_resultado_manual";
+
+function salvarResultadoManual() {
+    if (!dadosCiclo || !meusJogos.length) {
+        alert("Aguarde o carregamento dos jogos do ciclo antes de lançar o resultado.");
+        return;
+    }
+
+    const concurso = Number(document.getElementById("manual-concurso").value);
+    const data = document.getElementById("manual-data").value.trim();
+    const dezenas = [1,2,3,4,5,6].map(i => Number(document.getElementById("m" + i).value));
+
+    if (!Number.isInteger(concurso) || concurso <= 0 || !/^\\d{2}\\/\\d{2}\\/\\d{4}$/.test(data) || !validarDezenas(dezenas)) {
+        alert("Informe concurso válido, data no formato DD/MM/AAAA e seis dezenas diferentes entre 1 e 60.");
+        return;
+    }
+
+    const processados = (dadosCiclo.concursosProcessados || []).map(Number);
+    const ultimoProcessado = processados.length ? Math.max(...processados) : Number(dadosCiclo.concursoInicial) - 1;
+    const concursoOficial = Number(resultadoAtual && resultadoAtual.numero) || 0;
+
+    if (concurso <= ultimoProcessado || concurso <= concursoOficial) {
+        alert("Esse concurso já consta nos dados oficiais. Não é possível substituí-lo pelo lançamento manual.");
+        return;
+    }
+    if (concurso !== ultimoProcessado + 1) {
+        alert("Para evitar pular sorteios, lance somente o próximo concurso esperado: " + (ultimoProcessado + 1) + ".");
+        return;
+    }
+
+    const dezenasOrdenadas = [...dezenas].sort((a,b) => a-b);
+    const resultados = meusJogos.map(jogo => {
+        const dezenasAcertadas = jogo.numeros.filter(n => dezenasOrdenadas.includes(n));
+        const acertos = dezenasAcertadas.length;
+        return {
+            dono: jogo.dono,
+            numeros: [...jogo.numeros],
+            acertos,
+            dezenasAcertadas,
+            faixa: acertos >= 4 ? (acertos === 4 ? "QUADRA" : acertos === 5 ? "QUINA" : "SENA") : null
+        };
+    });
+
+    const manual = {
+        concurso, data, dezenas: dezenasOrdenadas,
+        acumulou: document.getElementById("manual-acumulou").checked,
+        premioSorteado: Number(document.getElementById("manual-premio").value) || 0,
+        proximoPremio: Number(document.getElementById("manual-proximo").value) || 0,
+        resultados,
+        origem: "manual-local",
+        processadoEm: new Date().toISOString()
+    };
+
+    localStorage.setItem(CHAVE_RESULTADO_MANUAL, JSON.stringify(manual));
+    aplicarResultadoManualSeNecessario(JSON.parse(localStorage.getItem("mega_resultado_cache") || "null"));
+    atualizarStatusManual();
+    preencherResultado(resultadoAtual);
+    alert("Resultado manual salvo neste navegador e aplicado à conferência. O JSON oficial não foi alterado.");
+}
+
+function aplicarResultadoManualSeNecessario(resultadoOficial) {
+    const salvo = localStorage.getItem(CHAVE_RESULTADO_MANUAL);
+    if (!salvo || !dadosCiclo) return;
+
+    let manual;
+    try { manual = JSON.parse(salvo); } catch(e) { localStorage.removeItem(CHAVE_RESULTADO_MANUAL); return; }
+
+    const numeroOficial = Number(resultadoOficial && resultadoOficial.concurso) || 0;
+    if (numeroOficial >= Number(manual.concurso)) {
+        localStorage.removeItem(CHAVE_RESULTADO_MANUAL);
+        return;
+    }
+
+    const processados = (dadosCiclo.concursosProcessados || []).map(Number);
+    const ultimoProcessado = processados.length ? Math.max(...processados) : Number(dadosCiclo.concursoInicial) - 1;
+    if (Number(manual.concurso) !== ultimoProcessado + 1) return;
+
+    dadosCiclo.historico = Array.isArray(dadosCiclo.historico) ? dadosCiclo.historico : [];
+    dadosCiclo.concursosProcessados = Array.isArray(dadosCiclo.concursosProcessados) ? dadosCiclo.concursosProcessados : [];
+    dadosCiclo.historico = dadosCiclo.historico.filter(item => Number(item.concurso) !== Number(manual.concurso));
+    dadosCiclo.historico.push(manual);
+    dadosCiclo.concursosProcessados.push(Number(manual.concurso));
+    dadosCiclo.concursosProcessados.sort((a,b) => a-b);
+    dadosCiclo.restantes = Math.max(0, Number(dadosCiclo.totalConcursos || 12) - dadosCiclo.concursosProcessados.length);
+
+    resultadoAtual = {
+        numero: Number(manual.concurso),
+        data: manual.data,
+        dezenas: manual.dezenas.map(Number),
+        acumulado: manual.acumulou === true,
+        premio: Number(manual.premioSorteado) || 0,
+        proximo: Number(manual.proximoPremio) || 0
+    };
+    preencherResultado(resultadoAtual);
+    atualizarInformacoesCiclo();
+}
+
+function atualizarStatusManual() {
+    const el = document.getElementById("manual-status");
+    if (!el) return;
+    const salvo = localStorage.getItem(CHAVE_RESULTADO_MANUAL);
+    if (!salvo) {
+        el.textContent = "Nenhum resultado manual salvo.";
+        return;
+    }
+    try {
+        const item = JSON.parse(salvo);
+        el.textContent = "Lançamento local ativo: concurso " + item.concurso + ". Ele fica salvo apenas neste navegador.";
+    } catch(e) {
+        el.textContent = "Não foi possível ler o lançamento manual salvo.";
+    }
+}
+
+function limparResultadoManual() {
+    if (!localStorage.getItem(CHAVE_RESULTADO_MANUAL)) {
+        alert("Não há lançamento manual para remover.");
+        return;
+    }
+    if (!confirm("Remover o resultado manual salvo neste navegador?")) return;
+    localStorage.removeItem(CHAVE_RESULTADO_MANUAL);
+    alert("Lançamento manual removido. Atualize a página para recarregar os dados oficiais.");
+    atualizarStatusManual();
 }
 
 
