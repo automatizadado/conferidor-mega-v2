@@ -9,9 +9,11 @@
     3074,
     3075,
     3076,
-    3077
+    3077,
+    3078,
+    3079
   ],
-  "restantes": 8,
+  "restantes": 6,
   "jogos": [
     {
       "dono": "Victor",
@@ -126,8 +128,8 @@
         57
       ],
       "acumulou": true,
-      "premioSorteado": 230000000.0,
-      "proximoPremio": 300000000.0,
+      "premioSorteado": 230000000,
+      "proximoPremio": 300000000,
       "resultados": [
         {
           "dono": "Victor",
@@ -278,8 +280,8 @@
         55
       ],
       "acumulou": true,
-      "premioSorteado": 300000000.0,
-      "proximoPremio": 305000000.0,
+      "premioSorteado": 300000000,
+      "proximoPremio": 305000000,
       "resultados": [
         {
           "dono": "Victor",
@@ -433,8 +435,8 @@
         57
       ],
       "acumulou": true,
-      "premioSorteado": 305000000.0,
-      "proximoPremio": 320000000.0,
+      "premioSorteado": 305000000,
+      "proximoPremio": 320000000,
       "resultados": [
         {
           "dono": "Victor",
@@ -584,8 +586,8 @@
         40
       ],
       "acumulou": false,
-      "premioSorteado": 320000000.0,
-      "proximoPremio": 2500000.0,
+      "premioSorteado": 320000000,
+      "proximoPremio": 2500000,
       "resultados": [
         {
           "dono": "Victor",
@@ -717,6 +719,355 @@
         }
       ],
       "processadoEm": "2026-10-29T09:43:50.548422+00:00"
+    },
+    {
+      "concurso": 3078,
+      "data": "29/10/2026",
+      "dezenas": [
+        5,
+        7,
+        12,
+        29,
+        34,
+        36
+      ],
+      "acumulou": true,
+      "premioSorteado": 0,
+      "proximoPremio": 6000000,
+      "rateio": [
+        {
+          "faixa": 1,
+          "ganhadores": 0,
+          "valorPremio": 0
+        },
+        {
+          "faixa": 2,
+          "ganhadores": 31,
+          "valorPremio": 20770.47
+        },
+        {
+          "faixa": 3,
+          "ganhadores": 2333,
+          "valorPremio": 394.27
+        }
+      ],
+      "resultados": [
+        {
+          "dono": "Victor",
+          "numeros": [
+            1,
+            13,
+            19,
+            24,
+            49,
+            57
+          ],
+          "acertos": 0,
+          "dezenasAcertadas": [],
+          "faixa": null
+        },
+        {
+          "dono": "Marcelo",
+          "numeros": [
+            5,
+            10,
+            23,
+            37,
+            40,
+            53
+          ],
+          "acertos": 1,
+          "dezenasAcertadas": [
+            5
+          ],
+          "faixa": null
+        },
+        {
+          "dono": "William",
+          "numeros": [
+            10,
+            25,
+            33,
+            36,
+            47,
+            51
+          ],
+          "acertos": 1,
+          "dezenasAcertadas": [
+            36
+          ],
+          "faixa": null
+        },
+        {
+          "dono": "Paulo",
+          "numeros": [
+            5,
+            10,
+            27,
+            33,
+            42,
+            53
+          ],
+          "acertos": 1,
+          "dezenasAcertadas": [
+            5
+          ],
+          "faixa": null
+        },
+        {
+          "dono": "Carlos",
+          "numeros": [
+            11,
+            19,
+            25,
+            33,
+            45,
+            46
+          ],
+          "acertos": 0,
+          "dezenasAcertadas": [],
+          "faixa": null
+        },
+        {
+          "dono": "Lau",
+          "numeros": [
+            5,
+            9,
+            15,
+            23,
+            45,
+            47
+          ],
+          "acertos": 1,
+          "dezenasAcertadas": [
+            5
+          ],
+          "faixa": null
+        },
+        {
+          "dono": "Neto",
+          "numeros": [
+            4,
+            6,
+            16,
+            32,
+            38,
+            50
+          ],
+          "acertos": 0,
+          "dezenasAcertadas": [],
+          "faixa": null
+        },
+        {
+          "dono": "Maycon",
+          "numeros": [
+            7,
+            13,
+            24,
+            27,
+            39,
+            60
+          ],
+          "acertos": 1,
+          "dezenasAcertadas": [
+            7
+          ],
+          "faixa": null
+        },
+        {
+          "dono": "Ari",
+          "numeros": [
+            5,
+            11,
+            17,
+            24,
+            28,
+            29
+          ],
+          "acertos": 2,
+          "dezenasAcertadas": [
+            5,
+            29
+          ],
+          "faixa": null
+        }
+      ],
+      "processadoEm": "2026-10-31T00:00:00.000Z",
+      "origem": "recuperacao_manual_fontes_publicas"
+    },
+    {
+      "concurso": 3079,
+      "data": "30/10/2026",
+      "dezenas": [
+        5,
+        9,
+        16,
+        40,
+        41,
+        59
+      ],
+      "acumulou": true,
+      "premioSorteado": 0,
+      "proximoPremio": 42000000,
+      "rateio": [
+        {
+          "faixa": 1,
+          "ganhadores": 0,
+          "valorPremio": 0
+        },
+        {
+          "faixa": 2,
+          "ganhadores": 12,
+          "valorPremio": 50706.28
+        },
+        {
+          "faixa": 3,
+          "ganhadores": 1110,
+          "valorPremio": 783.1
+        }
+      ],
+      "resultados": [
+        {
+          "dono": "Victor",
+          "numeros": [
+            1,
+            13,
+            19,
+            24,
+            49,
+            57
+          ],
+          "acertos": 0,
+          "dezenasAcertadas": [],
+          "faixa": null
+        },
+        {
+          "dono": "Marcelo",
+          "numeros": [
+            5,
+            10,
+            23,
+            37,
+            40,
+            53
+          ],
+          "acertos": 2,
+          "dezenasAcertadas": [
+            5,
+            40
+          ],
+          "faixa": null
+        },
+        {
+          "dono": "William",
+          "numeros": [
+            10,
+            25,
+            33,
+            36,
+            47,
+            51
+          ],
+          "acertos": 0,
+          "dezenasAcertadas": [],
+          "faixa": null
+        },
+        {
+          "dono": "Paulo",
+          "numeros": [
+            5,
+            10,
+            27,
+            33,
+            42,
+            53
+          ],
+          "acertos": 1,
+          "dezenasAcertadas": [
+            5
+          ],
+          "faixa": null
+        },
+        {
+          "dono": "Carlos",
+          "numeros": [
+            11,
+            19,
+            25,
+            33,
+            45,
+            46
+          ],
+          "acertos": 0,
+          "dezenasAcertadas": [],
+          "faixa": null
+        },
+        {
+          "dono": "Lau",
+          "numeros": [
+            5,
+            9,
+            15,
+            23,
+            45,
+            47
+          ],
+          "acertos": 2,
+          "dezenasAcertadas": [
+            5,
+            9
+          ],
+          "faixa": null
+        },
+        {
+          "dono": "Neto",
+          "numeros": [
+            4,
+            6,
+            16,
+            32,
+            38,
+            50
+          ],
+          "acertos": 1,
+          "dezenasAcertadas": [
+            16
+          ],
+          "faixa": null
+        },
+        {
+          "dono": "Maycon",
+          "numeros": [
+            7,
+            13,
+            24,
+            27,
+            39,
+            60
+          ],
+          "acertos": 0,
+          "dezenasAcertadas": [],
+          "faixa": null
+        },
+        {
+          "dono": "Ari",
+          "numeros": [
+            5,
+            11,
+            17,
+            24,
+            28,
+            29
+          ],
+          "acertos": 1,
+          "dezenasAcertadas": [
+            5
+          ],
+          "faixa": null
+        }
+      ],
+      "processadoEm": "2026-10-31T00:00:00.000Z",
+      "origem": "recuperacao_manual_fontes_publicas"
     }
   ]
 }
