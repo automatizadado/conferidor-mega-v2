@@ -498,7 +498,7 @@ style="margin-top:18px">
 <div style="flex:1">
 
 <label>
-Prêmio do Concurso (R$)
+Prêmio atual (R$)
 </label>
 
 <input
@@ -782,7 +782,7 @@ async function carregarTudo() {
 
             premio:
                 Number(
-                    resultado.premioConcurso ?? resultado.premioSorteado
+                    resultado.premioAtual ?? resultado.premioConcurso ?? resultado.premioSorteado
                 ) || 0,
 
             proximo:
