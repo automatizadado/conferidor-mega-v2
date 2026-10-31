@@ -171,8 +171,12 @@ jobs:
           )
 
           atual = None
+          BASE_ATUAL = None
           erros_api = []
+          candidatos_validos = []
 
+          # Consulta todas as fontes. Não aceita automaticamente a primeira:
+          # uma API pode estar atrasada em relação às demais.
           for nome_fonte, base_api in BASES:
               try:
                   print(f"Tentando fonte: {nome_fonte} - {base_api}")
@@ -184,24 +188,34 @@ jobs:
                       url_ultimo = base_api + "/latest"
 
                   candidato = buscar(url_ultimo)
-
                   numero_teste = candidato.get("concurso") or candidato.get("numero")
-                  dezenas_teste = candidato.get("dezenas") or candidato.get("listaDezenas") or candidato.get("listaDezenasSorteadas") or []
+                  dezenas_teste = (
+                      candidato.get("dezenas")
+                      or candidato.get("listaDezenas")
+                      or candidato.get("listaDezenasSorteadas")
+                      or candidato.get("dezenasSorteadasOrdemSorteio")
+                      or []
+                  )
 
                   if not numero_teste or not validar_dezenas([int(n) for n in dezenas_teste]):
                       raise Exception("Resposta sem concurso/dezenas válidos")
 
-                  atual = candidato
-                  BASE_ATUAL = (nome_fonte, base_api)
-                  print(f"Fonte selecionada: {nome_fonte} | concurso {numero_teste}")
-                  break
+                  numero_teste = int(numero_teste)
+                  candidatos_validos.append((numero_teste, nome_fonte, base_api, candidato))
+                  print(f"Fonte válida: {nome_fonte} | concurso {numero_teste}")
+
               except Exception as erro:
                   erros_api.append(f"{nome_fonte}: {erro}")
                   print(f"Falha na fonte: {erro}")
 
-          if atual is None:
+          if not candidatos_validos:
               raise Exception("Todas as fontes de resultados falharam: " + " | ".join(erros_api))
 
+          candidatos_validos.sort(key=lambda item: item[0], reverse=True)
+          numero_mais_recente, nome_fonte, base_api, atual = candidatos_validos[0]
+          BASE_ATUAL = (nome_fonte, base_api)
+          print(f"Fonte selecionada: {nome_fonte} | concurso mais recente: {numero_mais_recente}")
+          print("Fontes consultadas: " + ", ".join(f"{nome}:{numero}" for numero, nome, _, _ in candidatos_validos))
 
           # ==================================================
           # NÚMERO DO CONCURSO
