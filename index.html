@@ -476,7 +476,7 @@ onclick="carregarTudo()">
     <input id="m6" type="number" min="1" max="60" placeholder="06">
   </div>
   <div class="input-group-row">
-    <div style="flex:1"><label>Prêmio sorteado (R$)</label><input id="manual-premio" type="number" min="0" placeholder="Opcional"></div>
+    <div style="flex:1"><label>Prêmio do concurso (R$)</label><input id="manual-premio" type="number" min="0" placeholder="Opcional"></div>
     <div style="flex:1"><label>Próximo prêmio (R$)</label><input id="manual-proximo" type="number" min="0" placeholder="Opcional"></div>
   </div>
   <label style="display:flex;align-items:center;gap:8px;text-transform:none"><input id="manual-acumulou" type="checkbox" style="width:auto"> Acumulou</label>
@@ -498,7 +498,7 @@ style="margin-top:18px">
 <div style="flex:1">
 
 <label>
-Prêmio Sorteado (R$)
+Prêmio do Concurso (R$)
 </label>
 
 <input
@@ -782,7 +782,7 @@ async function carregarTudo() {
 
             premio:
                 Number(
-                    resultado.premioSorteado
+                    resultado.premioConcurso ?? resultado.premioSorteado
                 ) || 0,
 
             proximo:
@@ -2131,7 +2131,7 @@ function copiarWhatsApp() {
 
 🔢 *Concurso:* ${concurso}
 📅 *Data:* ${data}
-💰 *Prêmio Concurso:* R$ ${premio}
+💰 *Prêmio em disputa:* R$ ${premio}
 🚀 *Acumulou:* ${acumulou}
 🔮 *Próximo Prêmio:* R$ ${proximo}
 ✨ *Resultado:* ${sorteados.map(n => n.toString().padStart(2,"0")).join(" ")}
