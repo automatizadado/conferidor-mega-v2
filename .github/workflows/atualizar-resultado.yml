@@ -257,6 +257,8 @@ jobs:
           dezenas_api = (
               atual.get("dezenas")
               or atual.get("listaDezenas")
+              or atual.get("listaDezenasSorteadas")
+              or atual.get("dezenasSorteadasOrdemSorteio")
               or []
           )
 
@@ -364,31 +366,34 @@ jobs:
 
 
           # ==================================================
-          # PRÊMIO DO CONCURSO ATUAL
-          #
-          # Regra utilizada:
-          # a estimativa do concurso anterior corresponde
-          # ao prêmio previsto para o concurso atual.
+          # PRÊMIO REAL E PRÓXIMO PRÊMIO
           # ==================================================
 
+          def obter_faixa(dados, faixa_numero):
+              rateio = dados.get("listaRateioPremio") or dados.get("rateio") or []
+              for item in rateio:
+                  try:
+                      if int(item.get("faixa", 0)) == faixa_numero:
+                          return item
+                  except Exception:
+                      pass
+              return {}
+
+          faixa_sena = obter_faixa(atual, 1)
           premio_sorteado = (
-              anterior.get(
-                  "valorEstimadoProximoConcurso"
-              )
-              or anterior.get(
-                  "valorEstimadoProximo"
-              )
-              or anterior.get(
-                  "proximoPremio"
-              )
+              faixa_sena.get("valorPremio")
+              if faixa_sena
+              else atual.get("valorTotalPremioFaixaUm")
+          )
+          if premio_sorteado is None:
+              premio_sorteado = 0
+
+          proximo_premio = (
+              atual.get("valorEstimadoProximoConcurso")
+              or atual.get("valorEstimadoProximo")
+              or atual.get("proximoPremio")
           )
 
-          if premio_sorteado is None:
-
-              raise Exception(
-                  "Nao foi possivel localizar a estimativa "
-                  "do concurso anterior."
-              )
 
 
           # ==================================================
@@ -416,6 +421,15 @@ jobs:
 
               "proximoPremio":
                   proximo_premio,
+
+              "rateio": [
+                  {
+                      "faixa": int(item.get("faixa", 0)),
+                      "ganhadores": int(item.get("numeroDeGanhadores", item.get("ganhadores", 0)) or 0),
+                      "valorPremio": float(item.get("valorPremio", 0) or 0)
+                  }
+                  for item in (atual.get("listaRateioPremio") or atual.get("rateio") or [])
+              ],
 
               "concursoAnterior":
                   concurso_anterior,
