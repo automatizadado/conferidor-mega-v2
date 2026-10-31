@@ -458,6 +458,9 @@ jobs:
               "premioConcurso":
                   premio_concurso,
 
+              "premioAtual":
+                  premio_concurso,
+
               "proximoPremio":
                   proximo_premio,
 
