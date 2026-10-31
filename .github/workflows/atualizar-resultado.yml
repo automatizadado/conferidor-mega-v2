@@ -40,12 +40,12 @@ jobs:
           # ==================================================
 
           BASES = [
-              "https://api.guidi.dev.br/loteria/megasena",
-              "https://loteriascaixa-api.herokuapp.com/api/megasena",
-              "https://loterias-gutotech.herokuapp.com/api/megasena"
+              ("CAIXA", "https://servicebus2.caixa.gov.br/portaldeloterias/api/megasena"),
+              ("GUIDI", "https://api.guidi.dev.br/loteria/megasena"),
+              ("HEROKU", "https://loteriascaixa-api.herokuapp.com/api/megasena"),
+              ("GUTOTECH", "https://loterias-gutotech.herokuapp.com/api/megasena")
           ]
 
-          BASE = BASES[0]
           BASE_ATUAL = None
 
           ARQUIVO_RESULTADO = "resultado.json"
@@ -173,10 +173,17 @@ jobs:
           atual = None
           erros_api = []
 
-          for base_api in BASES:
+          for nome_fonte, base_api in BASES:
               try:
-                  print(f"Tentando fonte: {base_api}")
-                  candidato = buscar(base_api + ("/ultimo" if "guidi.dev.br" in base_api else "/latest"))
+                  print(f"Tentando fonte: {nome_fonte} - {base_api}")
+                  if nome_fonte == "CAIXA":
+                      url_ultimo = base_api
+                  elif nome_fonte == "GUIDI":
+                      url_ultimo = base_api + "/ultimo"
+                  else:
+                      url_ultimo = base_api + "/latest"
+
+                  candidato = buscar(url_ultimo)
 
                   numero_teste = candidato.get("concurso") or candidato.get("numero")
                   dezenas_teste = candidato.get("dezenas") or candidato.get("listaDezenas") or candidato.get("listaDezenasSorteadas") or []
@@ -185,11 +192,11 @@ jobs:
                       raise Exception("Resposta sem concurso/dezenas válidos")
 
                   atual = candidato
-                  BASE_ATUAL = base_api
-                  print(f"Fonte selecionada: {base_api} | concurso {numero_teste}")
+                  BASE_ATUAL = (nome_fonte, base_api)
+                  print(f"Fonte selecionada: {nome_fonte} | concurso {numero_teste}")
                   break
               except Exception as erro:
-                  erros_api.append(f"{base_api}: {erro}")
+                  erros_api.append(f"{nome_fonte}: {erro}")
                   print(f"Falha na fonte: {erro}")
 
           if atual is None:
@@ -341,15 +348,15 @@ jobs:
           anterior = None
           bases_historico = [BASE_ATUAL] + [b for b in BASES if b != BASE_ATUAL]
 
-          for base_api in bases_historico:
+          for nome_fonte, base_api in bases_historico:
               try:
-                  sufixo = "/" + str(concurso_anterior)
-                  candidato = buscar(base_api + sufixo)
+                  candidato = buscar(base_api + "/" + str(concurso_anterior))
                   if isinstance(candidato, dict):
                       anterior = candidato
+                      print(f"Concurso anterior obtido pela fonte {nome_fonte}.")
                       break
               except Exception as erro:
-                  print(f"Falha ao buscar concurso anterior em {base_api}: {erro}")
+                  print(f"Falha ao buscar concurso anterior em {nome_fonte}: {erro}")
 
           if anterior is None:
               print("Aviso: não foi possível buscar o concurso anterior; prêmio sorteado ficará indisponível.")
