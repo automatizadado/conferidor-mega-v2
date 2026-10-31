@@ -688,8 +688,6 @@ async function carregarTudo() {
             ciclo;
 
         localStorage.setItem("mega_resultado_cache", JSON.stringify(resultado));
-        aplicarResultadoManualSeNecessario(resultado);
-        atualizarStatusManual();
 
         meusJogos =
             ciclo.jogos.map(
@@ -742,6 +740,8 @@ async function carregarTudo() {
                 ) || 0
         };
 
+        aplicarResultadoManualSeNecessario(resultado);
+        atualizarStatusManual();
 
         preencherResultado(
             resultadoAtual
