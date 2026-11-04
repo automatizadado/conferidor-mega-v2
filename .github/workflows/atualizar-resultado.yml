@@ -464,6 +464,12 @@ jobs:
               "proximoPremio":
                   proximo_premio,
 
+              "dataProximoConcurso": (
+                  atual.get("dataProximoConcurso")
+                  or atual.get("dataProximoSorteio")
+                  or (atual.get("proximoConcurso") or {}).get("data")
+              ),
+
               "rateio": [
                   {
                       "faixa": int(item.get("faixa", 0)),
