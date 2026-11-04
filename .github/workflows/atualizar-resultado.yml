@@ -3,7 +3,7 @@ name: Atualizar Mega-Sena e Ciclo
 on:
   workflow_dispatch:
   schedule:
-    - cron: "17,47 * * * *"
+    - cron: "*/15 * * * *"
 
 permissions:
   contents: write
