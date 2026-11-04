@@ -268,6 +268,14 @@ button:disabled {
     gap: 6px;
 }
 
+.data-proximo {
+    margin-top: 5px;
+    color: #D1D5DB;
+    font-size: .70em;
+    text-align: center;
+    font-weight: 600;
+}
+
 .premio-divisao {
     margin-top: 5px;
     padding: 8px 6px;
@@ -521,7 +529,7 @@ id="premio"
 readonly>
 
 <div class="premio-divisao" id="parte-premio">
-Cota estimada por participante: ---
+Estimado para cada: ---
 </div>
 
 </div>
@@ -543,8 +551,9 @@ font-weight:bold
 ">
 
 <div class="premio-divisao" id="parte-proximo">
-Cota estimada por participante: ---
+Estimado para cada: ---
 </div>
+<div class="data-proximo" id="data-proximo-sorteio">Próximo sorteio: --/--/----</div>
 
 </div>
 
@@ -810,7 +819,10 @@ async function carregarTudo() {
             proximo:
                 Number(
                     resultado.proximoPremio
-                ) || 0
+                ) || 0,
+
+            dataProximo:
+                resultado.dataProximoConcurso || resultado.dataProximoSorteio || ""
         };
 
         aplicarResultadoManualSeNecessario(resultado);
@@ -1450,7 +1462,7 @@ function preencherResultado(
         const elemento = document.getElementById(id);
         if (!elemento) return;
         elemento.textContent = quantidadeParticipantes > 0 && Number(premio) > 0
-            ? "Cota estimada (" + quantidadeParticipantes + " participantes): " +
+            ? "Estimado para cada: " +
               (Number(premio) / quantidadeParticipantes).toLocaleString("pt-BR", {
                   style: "currency",
                   currency: "BRL"
@@ -1460,6 +1472,13 @@ function preencherResultado(
 
     atualizarCota("parte-premio", resultado.premio);
     atualizarCota("parte-proximo", resultado.proximo);
+
+    const dataProximo = document.getElementById("data-proximo-sorteio");
+    if (dataProximo) {
+        dataProximo.textContent = resultado.dataProximo
+            ? "Próximo sorteio: " + resultado.dataProximo
+            : "Próximo sorteio: data a confirmar";
+    }
 
 }
 
