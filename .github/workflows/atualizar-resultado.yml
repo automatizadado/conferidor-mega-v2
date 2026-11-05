@@ -217,6 +217,45 @@ jobs:
           print(f"Fonte selecionada: {nome_fonte} | concurso mais recente: {numero_mais_recente}")
           print("Fontes consultadas: " + ", ".join(f"{nome}:{numero}" for numero, nome, _, _ in candidatos_validos))
 
+          # Se os endpoints de "último concurso" estiverem atrasados,
+          # tenta consultar diretamente o concurso seguinte ao já salvo.
+          try:
+              with open(ARQUIVO_RESULTADO, "r", encoding="utf-8") as arquivo:
+                  resultado_salvo = json.load(arquivo)
+              concurso_salvo = int(resultado_salvo.get("concurso") or 0)
+          except Exception:
+              concurso_salvo = 0
+
+          if concurso_salvo and numero_mais_recente <= concurso_salvo:
+              concurso_esperado = concurso_salvo + 1
+              print(
+                  f"ALERTA: fontes de último concurso estão atrasadas "
+                  f"(salvo: {concurso_salvo}; fontes: {numero_mais_recente}). "
+                  f"Tentando consulta direta do concurso {concurso_esperado} na Caixa."
+              )
+              try:
+                  url_direta = f"{BASES[0][1]}/{concurso_esperado}?_={int(datetime.now(timezone.utc).timestamp())}"
+                  candidato_direto = buscar(url_direta)
+                  numero_direto = int(candidato_direto.get("concurso") or candidato_direto.get("numero") or 0)
+                  dezenas_diretas = (
+                      candidato_direto.get("dezenas")
+                      or candidato_direto.get("listaDezenas")
+                      or candidato_direto.get("listaDezenasSorteadas")
+                      or candidato_direto.get("dezenasSorteadasOrdemSorteio")
+                      or []
+                  )
+                  if numero_direto == concurso_esperado and validar_dezenas([int(n) for n in dezenas_diretas]):
+                      atual = candidato_direto
+                      nome_fonte = "CAIXA_CONSULTA_DIRETA"
+                      base_api = BASES[0][1]
+                      BASE_ATUAL = (nome_fonte, base_api)
+                      numero_mais_recente = numero_direto
+                      print(f"Consulta direta confirmou o concurso {numero_direto}.")
+                  else:
+                      print("Consulta direta não retornou o concurso esperado; mantendo o último resultado validado.")
+              except Exception as erro:
+                  print(f"Consulta direta do concurso {concurso_esperado} ainda indisponível: {erro}")
+
           # ==================================================
           # NÚMERO DO CONCURSO
           # ==================================================
