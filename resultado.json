@@ -10,12 +10,28 @@
     "59"
   ],
   "acumulou": true,
-  "premioSorteado": 0,
+  "premioSorteado": 0.0,
   "premioConcurso": 20000000.0,
   "premioAtual": 20000000.0,
   "proximoPremio": 27000000.0,
   "dataProximoConcurso": "15/11/2026",
-  "rateio": [],
+  "rateio": [
+    {
+      "faixa": 1,
+      "ganhadores": 0,
+      "valorPremio": 0.0
+    },
+    {
+      "faixa": 2,
+      "ganhadores": 30,
+      "valorPremio": 37046.54
+    },
+    {
+      "faixa": 3,
+      "ganhadores": 2272,
+      "valorPremio": 698.81
+    }
+  ],
   "concursoAnterior": 3084,
-  "atualizadoEm": "2026-11-13T17:05:18.510505+00:00"
+  "atualizadoEm": "2026-11-13T22:40:53.617610+00:00"
 }
