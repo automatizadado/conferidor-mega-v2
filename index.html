@@ -280,10 +280,46 @@ button:disabled {
 ========================================================= */
 
 .card.capturando {
-    padding: 18px;
+    width: 980px;
+    max-width: 980px;
+    padding: 24px;
     border: none;
     background: #0F1115;
+    box-sizing: border-box;
 }
+
+/* Composição horizontal independente da largura do celular. */
+.card.capturando #lista-acertos {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+    margin-top: 10px;
+}
+
+.card.capturando #lista-acertos > div {
+    min-width: 0;
+    min-height: 88px;
+    padding: 10px 8px !important;
+    border-radius: 10px !important;
+}
+
+.card.capturando #lista-acertos > div > div:first-child {
+    padding-bottom: 6px !important;
+    margin-bottom: 7px !important;
+}
+
+.card.capturando #lista-acertos > div > div:nth-child(2) {
+    font-size: 1em !important;
+}
+
+.card.capturando #lista-acertos > div > div:nth-child(2) span {
+    padding: 2px 5px !important;
+    margin: 0 2px !important;
+}
+
+.card.capturando .input-group-row,
+.card.capturando .campo { min-width: 0; }
+
 
 .card.capturando h2 {
     margin-bottom: 12px;
@@ -2360,7 +2396,9 @@ async function gerarFotoResultado() {
                 {
                     scale:2,
                     backgroundColor:"#0F1115",
-                    useCORS:true
+                    useCORS:true,
+                    width:980,
+                    windowWidth:980
                 }
             );
 
