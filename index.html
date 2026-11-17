@@ -282,8 +282,9 @@ button:disabled {
 .card.capturando {
     width: 1080px;
     max-width: 1080px;
+    height: 1920px;
     min-height: 1920px;
-    padding: 52px 54px;
+    padding: 46px 54px;
     border: 0;
     border-radius: 0;
     background:
@@ -332,9 +333,11 @@ button:disabled {
 .card.capturando #lista-acertos {
     display: grid !important;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    grid-auto-rows: minmax(145px, 1fr);
-    align-content: space-evenly;
-    gap: 16px !important;
+    grid-template-rows: repeat(6, minmax(0, 1fr)) !important;
+    grid-auto-flow: column !important;
+    grid-auto-rows: minmax(0, 1fr);
+    align-content: stretch;
+    gap: 14px !important;
     margin-top: 12px;
 }
 
@@ -1600,13 +1603,14 @@ function preencherResultado(
         :
         "---";
 
-    // Estimativa simples da divisão igualitária entre os participantes.
-    const quantidadeParticipantes = meusJogos.length;
+    // São 9 participantes/cotas, embora o grupo tenha 12 jogos.
+    // Os jogos adicionais não aumentam a quantidade de participantes.
+    const quantidadeParticipantes = 9;
     const atualizarCota = (id, premio) => {
         const elemento = document.getElementById(id);
         if (!elemento) return;
         elemento.textContent = quantidadeParticipantes > 0 && Number(premio) > 0
-            ? "Estimado para cada: " +
+            ? "Estimado por participante (9 cotas): " +
               (Number(premio) / quantidadeParticipantes).toLocaleString("pt-BR", {
                   style: "currency",
                   currency: "BRL"
