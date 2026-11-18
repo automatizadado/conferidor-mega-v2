@@ -332,23 +332,31 @@ button:disabled {
 
 .card.capturando #lista-acertos {
     display: grid !important;
+    width: 100%;
+    height: 1080px;
+    box-sizing: border-box;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     grid-template-rows: repeat(6, minmax(0, 1fr)) !important;
     grid-auto-flow: column !important;
     grid-auto-rows: minmax(0, 1fr);
     align-content: stretch;
-    gap: 14px !important;
+    gap: 12px !important;
     margin-top: 12px;
 }
 
 .card.capturando #lista-acertos > div {
     min-width: 0;
-    min-height: 145px;
+    min-height: 0;
+    height: 100%;
+    box-sizing: border-box;
     padding: 18px 16px !important;
     border-radius: 15px !important;
     background: linear-gradient(145deg, #1B2431, #171D27) !important;
     border: 1px solid #303D4F;
     box-shadow: 0 8px 18px rgba(0,0,0,.22);
+    display: flex !important;
+    flex-direction: column;
+    justify-content: space-between !important;
 }
 
 .card.capturando #lista-acertos > div > div:first-child {
@@ -357,15 +365,16 @@ button:disabled {
 }
 
 .card.capturando #lista-acertos > div > div:first-child span {
-    font-size: 1.08em !important;
+    font-size: 1.2em !important;
 }
 
 .card.capturando #lista-acertos > div > div:nth-child(2) {
-    font-size: 1.25em !important;
+    font-size: 1.48em !important;
+    letter-spacing: .2px;
 }
 
 .card.capturando #lista-acertos > div > div:nth-child(2) span {
-    padding: 4px 7px !important;
+    padding: 6px 8px !important;
     margin: 0 3px !important;
     border-radius: 6px !important;
 }
@@ -676,7 +685,7 @@ id="premio"
 readonly>
 
 <div class="premio-divisao" id="parte-premio">
-Estimado para cada: ---
+Estimado por participante (9 cotas): ---
 </div>
 
 </div>
@@ -698,7 +707,7 @@ font-weight:bold
 ">
 
 <div class="premio-divisao" id="parte-proximo">
-Estimado para cada: ---
+Estimado por participante (9 cotas): ---
 </div>
 <div class="data-proximo" id="data-proximo-sorteio">Próximo sorteio: --/--/----</div>
 
@@ -794,6 +803,9 @@ Salvar Imagem do Resultado 📸
 /* =========================================================
    ESTADO DO SITE
 ========================================================= */
+
+// Quantidade de cotas do bolão: 9 participantes para 12 jogos.
+const QUANTIDADE_COTAS = 9;
 
 let meusJogos = [];
 
@@ -1605,7 +1617,7 @@ function preencherResultado(
 
     // São 9 participantes/cotas, embora o grupo tenha 12 jogos.
     // Os jogos adicionais não aumentam a quantidade de participantes.
-    const quantidadeParticipantes = 9;
+    const quantidadeParticipantes = QUANTIDADE_COTAS;
     const atualizarCota = (id, premio) => {
         const elemento = document.getElementById(id);
         if (!elemento) return;
