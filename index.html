@@ -523,6 +523,77 @@ na imagem compartilhada.
 
 }
 
+
+/* Composição final da imagem: cabeçalho destacado e 12 linhas compactas. */
+.card.capturando {
+    gap: 9px !important;
+    padding: 34px 44px !important;
+}
+.card.capturando h2 {
+    font-size: 2.05em !important;
+    line-height: 1.18 !important;
+    margin: 2px 0 10px !important;
+    letter-spacing: -.35px !important;
+}
+.card.capturando .input-group-row {
+    gap: 9px !important;
+    margin-bottom: 5px !important;
+}
+.card.capturando label {
+    font-size: .82em !important;
+    margin-bottom: 4px !important;
+}
+.card.capturando input:not(#s1):not(#s2):not(#s3):not(#s4):not(#s5):not(#s6) {
+    padding: 9px 10px !important;
+    font-size: 15px !important;
+}
+.card.capturando .premio-divisao {
+    padding: 7px 6px !important;
+    font-size: .78em !important;
+}
+.card.capturando .sorteados-container {
+    gap: 8px !important;
+    margin: 4px 0 8px !important;
+}
+.card.capturando .sorteados-container input {
+    padding: 13px 0 !important;
+    font-size: 1.45em !important;
+}
+.card.capturando #resultado-box {
+    margin-top: 2px !important;
+}
+.card.capturando #lista-acertos {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    height: 1010px !important;
+    gap: 8px !important;
+    margin-top: 7px !important;
+}
+.card.capturando #lista-acertos > .game-row {
+    flex: 1 1 0 !important;
+    min-height: 0 !important;
+    width: 100% !important;
+    padding: 8px 14px !important;
+    grid-template-columns: minmax(0,1fr) 145px 205px !important;
+    gap: 10px !important;
+}
+.card.capturando .game-numbers span {
+    font-size: 1.25em !important;
+    padding: 6px 7px !important;
+    margin: 0 !important;
+    border-radius: 6px !important;
+}
+.card.capturando .game-hits {
+    font-size: 1.16em !important;
+}
+.card.capturando .game-owner {
+    font-size: 1.15em !important;
+}
+.card.capturando .game-award {
+    padding: 3px !important;
+    font-size: .78em !important;
+}
 </style>
 </head>
 
@@ -2112,93 +2183,68 @@ function conferir() {
 
 
             html += `
-
-            <div style="
-            background:#181C25;
-            padding:12px 8px;
-            border-radius:10px;
-            border-top:4px solid ${acertos >= 4 ? "#10B981" : "#374151"};
-            box-shadow:0 4px 6px rgba(0,0,0,.25);
-            display:flex;
-            flex-direction:column;
-            justify-content:space-between;
+            <div class="game-row" style="
+                border-top:3px solid ${acertos >= 4 ? "#10B981" : "#374151"};
+                background:linear-gradient(110deg,#1B2431,#171D27);
+                border-radius:12px;
+                box-shadow:0 4px 10px rgba(0,0,0,.2);
+                display:grid;
+                grid-template-columns:minmax(0,1fr) 145px 205px;
+                align-items:center;
+                gap:12px;
+                padding:10px 16px;
+                box-sizing:border-box;
             ">
-
-
-            <div style="
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            border-bottom:1px dashed #374151;
-            padding-bottom:8px;
-            margin-bottom:10px;
-            ">
-
-
-            <span style="
-            font-size:.9em;
-            color:#60A5FA;
-            font-weight:700;
-            white-space:nowrap;
-            ">
-
-            👤 ${jogoObj.dono}
-
-            </span>
-
-
-            <span style="
-            font-size:.85em;
-            color:${acertos >= 4 ? "#34D399" : "#9CA3AF"};
-            font-weight:700;
-            ">
-
-            🎯 ${acertos} acertos
-
-            </span>
-
-            </div>
-
-
-            <div style="
-            font-size:1.05em;
-            text-align:center;
-            white-space:nowrap;
-            ">
-
-            ${jogoHtml}
-
-            </div>
-
-
-            ${
-                faixa
-                ?
-                `
-
-                <div style="
-                margin-top:10px;
-                text-align:center;
-                font-size:.85em;
-                background:linear-gradient(135deg,#10B981,#047857);
-                color:#fff;
-                font-weight:800;
-                border-radius:4px;
-                padding:4px;
+                <div class="game-numbers" style="
+                    display:flex;
+                    align-items:center;
+                    justify-content:flex-start;
+                    gap:5px;
+                    white-space:nowrap;
+                    min-width:0;
                 ">
-
-                ${faixa}
-
+                    ${jogoHtml}
                 </div>
 
-                `
-                :
-                ""
-            }
+                <div class="game-hits" style="
+                    text-align:center;
+                    color:${acertos >= 4 ? "#34D399" : "#D1D5DB"};
+                    font-size:1.18em;
+                    font-weight:800;
+                    white-space:nowrap;
+                ">
+                    🎯 ${acertos} acertos
+                </div>
 
+                <div class="game-owner" style="
+                    text-align:right;
+                    color:#60A5FA;
+                    font-size:1.16em;
+                    font-weight:800;
+                    white-space:nowrap;
+                    overflow:hidden;
+                    text-overflow:ellipsis;
+                ">
+                    👤 ${jogoObj.dono}
+                </div>
+
+                ${faixa ? `
+                    <div class="game-award" style="
+                        grid-column:1 / -1;
+                        margin-top:2px;
+                        text-align:center;
+                        font-size:.85em;
+                        background:linear-gradient(135deg,#10B981,#047857);
+                        color:#fff;
+                        font-weight:800;
+                        border-radius:6px;
+                        padding:4px;
+                    ">${faixa}</div>
+                ` : ""}
             </div>
-
             `;
+
+
 
         }
     );
