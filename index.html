@@ -594,6 +594,119 @@ na imagem compartilhada.
     padding: 3px !important;
     font-size: .78em !important;
 }
+
+
+/* Ajustes finais orientados pelo print enviado: leitura, hierarquia e aproveitamento vertical. */
+.card.capturando {
+    width:1080px !important;
+    max-width:1080px !important;
+    height:1920px !important;
+    min-height:1920px !important;
+    padding:42px 46px 34px !important;
+    gap:12px !important;
+    justify-content:flex-start !important;
+}
+.card.capturando h2 {
+    font-size:2.75em !important;
+    line-height:1.15 !important;
+    margin:0 0 14px !important;
+}
+.card.capturando label {
+    font-size:1.02em !important;
+    margin-bottom:6px !important;
+}
+.card.capturando input:not(#s1):not(#s2):not(#s3):not(#s4):not(#s5):not(#s6) {
+    font-size:1.28em !important;
+    padding:13px 12px !important;
+    min-height:54px !important;
+}
+.card.capturando .premio-divisao {
+    font-size:.94em !important;
+    padding:9px 8px !important;
+}
+.card.capturando .data-proximo {
+    font-size:1em !important;
+    margin:8px 0 12px !important;
+}
+.card.capturando .sorteados-container {
+    gap:10px !important;
+    margin:7px 0 12px !important;
+}
+.card.capturando .sorteados-container input {
+    font-size:1.85em !important;
+    font-weight:900 !important;
+    padding:17px 0 !important;
+    min-height:78px !important;
+}
+.card.capturando #resultado-box {
+    margin-top:4px !important;
+}
+.card.capturando #lista-acertos {
+    display:flex !important;
+    flex-direction:column !important;
+    width:100% !important;
+    height:1120px !important;
+    gap:9px !important;
+    margin-top:8px !important;
+}
+.card.capturando #lista-acertos > .game-row {
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) 150px 190px !important;
+    grid-template-rows:1fr !important;
+    grid-auto-flow:row !important;
+    align-items:center !important;
+    justify-content:stretch !important;
+    flex:1 1 0 !important;
+    width:100% !important;
+    height:auto !important;
+    min-height:0 !important;
+    padding:10px 16px !important;
+    gap:12px !important;
+    flex-direction:initial !important;
+}
+.card.capturando #lista-acertos > .game-row > .game-numbers {
+    display:flex !important;
+    flex-direction:row !important;
+    justify-content:flex-start !important;
+    align-items:center !important;
+    gap:6px !important;
+    white-space:nowrap !important;
+    min-width:0 !important;
+    padding:0 !important;
+    margin:0 !important;
+}
+.card.capturando #lista-acertos > .game-row > .game-numbers span {
+    font-size:1.55em !important;
+    line-height:1.25 !important;
+    padding:7px 9px !important;
+    margin:0 !important;
+    border-radius:7px !important;
+}
+.card.capturando #lista-acertos > .game-row > .game-hits {
+    display:block !important;
+    text-align:center !important;
+    font-size:1.28em !important;
+    line-height:1.2 !important;
+    white-space:nowrap !important;
+    padding:0 !important;
+    margin:0 !important;
+}
+.card.capturando #lista-acertos > .game-row > .game-owner {
+    display:block !important;
+    text-align:right !important;
+    font-size:1.32em !important;
+    line-height:1.2 !important;
+    white-space:nowrap !important;
+    padding:0 !important;
+    margin:0 !important;
+}
+.card.capturando #lista-acertos > .game-row > .game-award {
+    display:none !important;
+}
+.card.capturando #alerta:not(:empty) {
+    margin:8px 0 0 !important;
+    font-size:1.12em !important;
+}
 </style>
 </head>
 
@@ -2537,7 +2650,7 @@ async function gerarFotoResultado() {
             await html2canvas(
                 card,
                 {
-                    scale:1,
+                    scale:2,
                     backgroundColor:"#0F1115",
                     useCORS:true,
                     width:1080,
