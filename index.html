@@ -788,6 +788,24 @@ na imagem compartilhada.
     font-size:1.2em !important;
     margin-top:10px !important;
 }
+
+/* Correção do recorte vertical das dezenas na imagem 9:16.
+   Mantém o tamanho atual dos cartões e da tipografia; remove o line-height
+   excessivamente compacto que fazia o html2canvas cortar o topo dos dígitos. */
+.card.capturando .sorteados-container input {
+    box-sizing: border-box !important;
+    height: 92px !important;
+    min-height: 92px !important;
+    padding: 0 !important;
+    line-height: 1.2 !important;
+    vertical-align: middle !important;
+    text-align: center !important;
+    font-size: 2.05em !important;
+    font-weight: 900 !important;
+    font-family: inherit !important;
+    overflow: visible !important;
+}
+
 </style>
 </head>
 
