@@ -789,21 +789,23 @@ na imagem compartilhada.
     margin-top:10px !important;
 }
 
-/* Correção do recorte vertical das dezenas na imagem 9:16.
-   Mantém o tamanho atual dos cartões e da tipografia; remove o line-height
-   excessivamente compacto que fazia o html2canvas cortar o topo dos dígitos. */
+/* Renderização estável das dezenas no PNG: campos texto evitam o recorte
+   do valor interno dos inputs type=number no html2canvas. */
 .card.capturando .sorteados-container input {
+    appearance: none !important;
+    -webkit-appearance: none !important;
     box-sizing: border-box !important;
+    width: 100% !important;
     height: 92px !important;
     min-height: 92px !important;
     padding: 0 !important;
-    line-height: 1.2 !important;
-    vertical-align: middle !important;
+    line-height: 92px !important;
     text-align: center !important;
-    font-size: 2.05em !important;
+    vertical-align: middle !important;
+    font-size: 1.55em !important;
     font-weight: 900 !important;
     font-family: inherit !important;
-    overflow: visible !important;
+    overflow: hidden !important;
 }
 
 </style>
@@ -1009,12 +1011,12 @@ Números Sorteados
 
 <div class="sorteados-container">
 
-<input type="number" id="s1" readonly>
-<input type="number" id="s2" readonly>
-<input type="number" id="s3" readonly>
-<input type="number" id="s4" readonly>
-<input type="number" id="s5" readonly>
-<input type="number" id="s6" readonly>
+<input type="text" inputmode="numeric" id="s1" readonly>
+<input type="text" inputmode="numeric" id="s2" readonly>
+<input type="text" inputmode="numeric" id="s3" readonly>
+<input type="text" inputmode="numeric" id="s4" readonly>
+<input type="text" inputmode="numeric" id="s5" readonly>
+<input type="text" inputmode="numeric" id="s6" readonly>
 
 </div>
 
