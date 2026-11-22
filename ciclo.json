@@ -8,9 +8,10 @@
   "concursosProcessados": [
     3086,
     3087,
-    3088
+    3088,
+    3089
   ],
-  "restantes": 9,
+  "restantes": 8,
   "jogos": [
     {
       "dono": "Victor",
@@ -750,6 +751,204 @@
         }
       ],
       "processadoEm": "2026-11-20T03:23:03.858981+00:00"
+    },
+    {
+      "concurso": 3089,
+      "data": "22/11/2026",
+      "dezenas": [
+        17,
+        18,
+        27,
+        36,
+        58,
+        59
+      ],
+      "acumulou": true,
+      "premioSorteado": 0.0,
+      "proximoPremio": 65000000.0,
+      "resultados": [
+        {
+          "dono": "Victor",
+          "numeros": [
+            1,
+            13,
+            19,
+            24,
+            49,
+            57
+          ],
+          "acertos": 0,
+          "dezenasAcertadas": [],
+          "faixa": null
+        },
+        {
+          "dono": "Marcelo",
+          "numeros": [
+            5,
+            10,
+            23,
+            37,
+            40,
+            53
+          ],
+          "acertos": 0,
+          "dezenasAcertadas": [],
+          "faixa": null
+        },
+        {
+          "dono": "William",
+          "numeros": [
+            10,
+            25,
+            33,
+            36,
+            47,
+            51
+          ],
+          "acertos": 1,
+          "dezenasAcertadas": [
+            36
+          ],
+          "faixa": null
+        },
+        {
+          "dono": "Paulo",
+          "numeros": [
+            5,
+            10,
+            27,
+            33,
+            42,
+            53
+          ],
+          "acertos": 1,
+          "dezenasAcertadas": [
+            27
+          ],
+          "faixa": null
+        },
+        {
+          "dono": "Carlos",
+          "numeros": [
+            11,
+            19,
+            25,
+            33,
+            45,
+            46
+          ],
+          "acertos": 0,
+          "dezenasAcertadas": [],
+          "faixa": null
+        },
+        {
+          "dono": "Lau",
+          "numeros": [
+            5,
+            9,
+            15,
+            23,
+            45,
+            47
+          ],
+          "acertos": 0,
+          "dezenasAcertadas": [],
+          "faixa": null
+        },
+        {
+          "dono": "Neto",
+          "numeros": [
+            4,
+            6,
+            16,
+            32,
+            38,
+            50
+          ],
+          "acertos": 0,
+          "dezenasAcertadas": [],
+          "faixa": null
+        },
+        {
+          "dono": "Maycon",
+          "numeros": [
+            8,
+            19,
+            25,
+            28,
+            34,
+            39
+          ],
+          "acertos": 0,
+          "dezenasAcertadas": [],
+          "faixa": null
+        },
+        {
+          "dono": "Ari",
+          "numeros": [
+            5,
+            11,
+            17,
+            24,
+            28,
+            29
+          ],
+          "acertos": 1,
+          "dezenasAcertadas": [
+            17
+          ],
+          "faixa": null
+        },
+        {
+          "dono": "Jogo 10",
+          "numeros": [
+            6,
+            13,
+            17,
+            27,
+            33,
+            57
+          ],
+          "acertos": 2,
+          "dezenasAcertadas": [
+            17,
+            27
+          ],
+          "faixa": null
+        },
+        {
+          "dono": "Jogo 11",
+          "numeros": [
+            6,
+            10,
+            17,
+            27,
+            40,
+            42
+          ],
+          "acertos": 2,
+          "dezenasAcertadas": [
+            17,
+            27
+          ],
+          "faixa": null
+        },
+        {
+          "dono": "Jogo 12",
+          "numeros": [
+            5,
+            10,
+            24,
+            29,
+            37,
+            39
+          ],
+          "acertos": 0,
+          "dezenasAcertadas": [],
+          "faixa": null
+        }
+      ],
+      "processadoEm": "2026-11-22T17:42:59.632944+00:00"
     }
   ]
 }
