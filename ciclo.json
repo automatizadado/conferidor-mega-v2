@@ -10,9 +10,10 @@
     3087,
     3088,
     3089,
-    3090
+    3090,
+    3091
   ],
-  "restantes": 7,
+  "restantes": 6,
   "jogos": [
     {
       "dono": "Victor",
@@ -1160,6 +1161,210 @@
         }
       ],
       "processadoEm": "2026-11-25T04:37:21.361424+00:00"
+    },
+    {
+      "concurso": 3091,
+      "data": "26/11/2026",
+      "dezenas": [
+        4,
+        19,
+        22,
+        23,
+        28,
+        37
+      ],
+      "acumulou": true,
+      "premioSorteado": 0,
+      "proximoPremio": 82000000.0,
+      "resultados": [
+        {
+          "dono": "Victor",
+          "numeros": [
+            1,
+            13,
+            19,
+            24,
+            49,
+            57
+          ],
+          "acertos": 1,
+          "dezenasAcertadas": [
+            19
+          ],
+          "faixa": null
+        },
+        {
+          "dono": "Marcelo",
+          "numeros": [
+            5,
+            10,
+            23,
+            37,
+            40,
+            53
+          ],
+          "acertos": 2,
+          "dezenasAcertadas": [
+            23,
+            37
+          ],
+          "faixa": null
+        },
+        {
+          "dono": "William",
+          "numeros": [
+            10,
+            25,
+            33,
+            36,
+            47,
+            51
+          ],
+          "acertos": 0,
+          "dezenasAcertadas": [],
+          "faixa": null
+        },
+        {
+          "dono": "Paulo",
+          "numeros": [
+            5,
+            10,
+            27,
+            33,
+            42,
+            53
+          ],
+          "acertos": 0,
+          "dezenasAcertadas": [],
+          "faixa": null
+        },
+        {
+          "dono": "Carlos",
+          "numeros": [
+            11,
+            19,
+            25,
+            33,
+            45,
+            46
+          ],
+          "acertos": 1,
+          "dezenasAcertadas": [
+            19
+          ],
+          "faixa": null
+        },
+        {
+          "dono": "Lau",
+          "numeros": [
+            5,
+            9,
+            15,
+            23,
+            45,
+            47
+          ],
+          "acertos": 1,
+          "dezenasAcertadas": [
+            23
+          ],
+          "faixa": null
+        },
+        {
+          "dono": "Neto",
+          "numeros": [
+            4,
+            6,
+            16,
+            32,
+            38,
+            50
+          ],
+          "acertos": 1,
+          "dezenasAcertadas": [
+            4
+          ],
+          "faixa": null
+        },
+        {
+          "dono": "Maycon",
+          "numeros": [
+            8,
+            19,
+            25,
+            28,
+            34,
+            39
+          ],
+          "acertos": 2,
+          "dezenasAcertadas": [
+            19,
+            28
+          ],
+          "faixa": null
+        },
+        {
+          "dono": "Ari",
+          "numeros": [
+            5,
+            11,
+            17,
+            24,
+            28,
+            29
+          ],
+          "acertos": 1,
+          "dezenasAcertadas": [
+            28
+          ],
+          "faixa": null
+        },
+        {
+          "dono": "Jogo 10",
+          "numeros": [
+            6,
+            13,
+            17,
+            27,
+            33,
+            57
+          ],
+          "acertos": 0,
+          "dezenasAcertadas": [],
+          "faixa": null
+        },
+        {
+          "dono": "Jogo 11",
+          "numeros": [
+            6,
+            10,
+            17,
+            27,
+            40,
+            42
+          ],
+          "acertos": 0,
+          "dezenasAcertadas": [],
+          "faixa": null
+        },
+        {
+          "dono": "Jogo 12",
+          "numeros": [
+            5,
+            10,
+            24,
+            29,
+            37,
+            39
+          ],
+          "acertos": 1,
+          "dezenasAcertadas": [
+            37
+          ],
+          "faixa": null
+        }
+      ],
+      "processadoEm": "2026-11-27T08:40:54.331019+00:00"
     }
   ]
 }
